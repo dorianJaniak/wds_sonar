@@ -14,10 +14,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    mapmonitorviewer.cpp
+        mapviewer.cpp
 
 HEADERS  += mainwindow.h \
-    mapmonitorviewer.h \
-    globalheader.h
+    globalheader.h \
+    mapviewer.h
 
 FORMS    += mainwindow.ui

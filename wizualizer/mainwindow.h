@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "mapviewer.h"
 
 class OpenGLWindow;
 
@@ -20,7 +20,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    OpenGLWindow *_monitor;
+    MapViewer *_monitor;
 };
 
 #endif // MAINWINDOW_H

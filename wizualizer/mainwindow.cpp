@@ -8,11 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    _monitor = ui->mainView;
 }
 
 MainWindow::~MainWindow()
 {
-    delete _monitor;
     delete ui;
 }

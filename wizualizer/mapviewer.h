@@ -26,7 +26,10 @@ protected:
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
 private:
+    void addGrid(int rows = 10, int cols = 10);
+
     void clean();
+
     QOpenGLShaderProgram * _program;
     QMatrix4x4 _projMat;
     GLuint _projMatID;
@@ -34,6 +37,19 @@ private:
     QOpenGLVertexArrayObject _vao;
     QOpenGLBuffer _vbo;
 
+    //New
+    //QOpenGLShaderProgram * _mapProgram;
+    //QOpenGLShaderProgram * _gridProgram;
+    //QOpenGLShaderProgram * _robotProgram;
+    //QVector<QOpenGLBuffer> _mapsVBO;      //Na jedno VAO przypadnie więcej niż jedno VBO, ponieważ siatka może być rozerwana (gdy duża odległość)
+    QOpenGLBuffer _gridVBO;
+    //QOpenGLBuffer _robotVBO;
+    //QVector<QOpenGLVertexArrayObject> _mapsVAO;
+    QOpenGLVertexArrayObject _gridVAO;
+    //QOpenGLVertexArrayObject _robotVAO;
+
+    //Do poprawy:
+   // GLfloat * vertices;
 };
 
 #endif // MAPVIEWER_H

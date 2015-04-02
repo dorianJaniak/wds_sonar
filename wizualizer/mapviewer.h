@@ -26,6 +26,7 @@ protected:
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
 private:
+    void addTestTriangle();
     void addGrid(int rows = 10, int cols = 10);
 
     void clean();
@@ -49,7 +50,7 @@ private:
     //QOpenGLVertexArrayObject _robotVAO;
 
     //Do poprawy:
-   // GLfloat * vertices;
+    GLfloat * vertices2;
 };
 
 #endif // MAPVIEWER_H

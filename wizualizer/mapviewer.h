@@ -13,6 +13,7 @@
 
 class MapViewer : public QOpenGLWidget, public QOpenGLFunctions
 {
+    Q_OBJECT
 public:
     MapViewer(QWidget *parent = 0);
     ~MapViewer();
@@ -51,6 +52,8 @@ private:
 
     //Do poprawy:
     GLfloat * vertices2;
+    QOpenGLFunctions * f;
+    unsigned int countOfElements;
 };
 
 #endif // MAPVIEWER_H

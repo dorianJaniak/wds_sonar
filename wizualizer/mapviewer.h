@@ -59,6 +59,7 @@ private:
 
     //Do poprawy:
 
+
 };
 
 #endif // MAPVIEWER_H

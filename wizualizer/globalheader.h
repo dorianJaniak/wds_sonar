@@ -1,6 +1,0 @@
-#ifndef GLOBALHEADER
-#define GLOBALHEADER
-
-
-#endif // GLOBALHEADER
-

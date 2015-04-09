@@ -28,16 +28,23 @@ protected:
 
 private:
     void addTestTriangle();
-    void addGrid(int rows = 10, int cols = 10);
+    void addGrid(float space = 0.5f, int rows = 10, int cols = 10);
 
     void clean();
 
+    QOpenGLFunctions * f;
+
     QOpenGLShaderProgram * _program;
     QMatrix4x4 _projMat;
+    QMatrix4x4 _centerMoveMat;
     GLuint _projMatID;
+    GLuint _centerMoveMatID;
 
     QOpenGLVertexArrayObject _vao;
     QOpenGLBuffer _vbo;
+
+    unsigned int _gridCountOfVerts;
+    GLfloat * _gridVertices;
 
     //New
     //QOpenGLShaderProgram * _mapProgram;
@@ -51,9 +58,7 @@ private:
     //QOpenGLVertexArrayObject _robotVAO;
 
     //Do poprawy:
-    GLfloat * vertices2;
-    QOpenGLFunctions * f;
-    unsigned int countOfElements;
+
 };
 
 #endif // MAPVIEWER_H

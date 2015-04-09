@@ -11,35 +11,12 @@ const GLfloat vertices [] = {
     -0.3f, -0.4f, 0.0f, 1.0f
 };
 
-/*const GLfloat vertices3 [] = {
-    -0.9f, 0.0f, -0.9f, 1.0f,      //V1
-    0.9f, 0.0f, -0.9f, 1.0f,     //V2
-    -0.9f, 0.0f, -0.8f, 1.0f,       //V3
-    0.9f, 0.0f, -0.8f, 1.0f,
-    -0.9f, 0.0f, -0.9f, 1.0f,
-    -0.9f, 0.0f, 0.9f, 1.0f,
-    -0.8f, 0.0f, -0.9f, 1.0f,
-    -0.8f, 0.0f, 0.9f, 1.0f
-};*/
-
-const GLfloat vertices3 [] = {
-    -0.5f, 0.0f, -1.0f, 1.0f,      //V1
-    -0.5f, 0.0f, 1.0f, 1.0f,     //V2
-    -0.4f, 0.0f, -1.0f, 1.0f,       //V3
-    -0.4f, 0.0f, 1.f, 1.0f,
-    -0.3f, 0.0f, -1.f, 1.0f,
-    -0.3f, 0.0f, 1.f, 1.0f,
-    -0.2f, 0.0f, -1.f, 1.0f,
-    -0.2f, 0.0f, 1.f, 1.0f
-};
-
 
 MapViewer::MapViewer(QWidget * parent) :
     QOpenGLWidget(parent),
     _vao(parent),
     _gridVAO(parent)
 {
-
 
 }
 
@@ -61,7 +38,6 @@ QSize MapViewer::sizeHint() const
 void MapViewer::initializeGL()
 {
     f = QOpenGLContext::currentContext()->functions();
-   // f = (QOpenGLFunctions*) QOpenGLContext::currentContext()->versionFunctions();
     initializeOpenGLFunctions();
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &MapViewer::clean);
 
@@ -76,11 +52,13 @@ void MapViewer::initializeGL()
     _program->link();
     _program->bind();
 
-    _projMatID = _program->uniformLocation("MVP");
+    _projMatID = _program->uniformLocation("Mproj");
+    _centerMoveMatID = _program->uniformLocation("Mmove");
 
     addTestTriangle();
     addGrid();
     _projMat.setToIdentity();
+    _centerMoveMat.setToIdentity();
     _program->release();
 }
 
@@ -92,13 +70,13 @@ void MapViewer::paintGL()
     _vao.bind();
     _program->bind();
     _program->setUniformValue(_projMatID, _projMat);
+    _program->setUniformValue(_centerMoveMatID, _centerMoveMat);
 
     f->glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 
     _gridVAO.bind();
     _program->bind();
-   // f->glDrawArrays(GL_LINES,0,8);
-    f->glDrawArrays(GL_LINES,0,countOfElements/4);
+    f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
     _program->release();
 }
 
@@ -108,93 +86,68 @@ void MapViewer::resizeGL(int width, int height)
     if(kat > 360.0f) kat-=360.0f;
     kat += 2.0f;
     _projMat.setToIdentity();
-    _projMat.rotate(kat,1.0f,0.2f,0.0f);
-    _projMat.perspective(120.0f,GLfloat(width)/height, 0.1f,100.0f);
+    _projMat.perspective(60.0f,(float)(width)/(float)height, 0.01f,100.0f);
+
+    _centerMoveMat.setToIdentity();
+    _centerMoveMat.translate(0.0f,-0.2f,-1.0f);
+    _centerMoveMat.rotate(kat, 0.0f, 1.0f, 0.0f);
+
 }
 
 void MapViewer::addTestTriangle()
 {
     _vao.create();
-  //  QOpenGLVertexArrayObject::Binder vaoB(&_vao);
     _vao.bind();
 
     _vbo.create();
     _gridVBO.setUsagePattern(QOpenGLBuffer::StaticDraw);
     _vbo.bind();
     _vbo.allocate(&vertices,4*4*sizeof(GLfloat));
-
-      //  QOpenGLFunctions * f = QOpenGLContext::currentContext()->functions();
         _program->enableAttributeArray(0);
         _program->setAttributeArray(0,GL_FLOAT,0,4);
-     //   f->glEnableVertexAttribArray(0);
-     //   f->glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE, 0*sizeof(GLfloat), 0);
- //   _vbo.release();
- //   _vao.release();
-
 }
 
-void MapViewer::addGrid(int rows, int cols)
+void MapViewer::addGrid(float space, int rows, int cols)
 {
-    countOfElements = (rows*2+cols*2)*4;
-    vertices2 = new GLfloat[countOfElements];
+    _gridCountOfVerts = (rows*2+cols*2);
+    _gridVertices = new GLfloat[_gridCountOfVerts*4];
     int j=0;
     //Najpierw pionowe
     for(float i= -rows/2; i<=(rows/2-1); i+=1.0f, j+=2)
     {
-     //   vertices2[(j+0)*4+0] = (GLfloat)i;           //X1
-     //   vertices2[(j+1)*4+0] = (GLfloat)i;           //X2
-        vertices2[(j+0)*4+0] = (GLfloat)(i/(float)rows);           //X1
-        vertices2[(j+1)*4+0] = (GLfloat)(i/(float)rows);           //X2
-        vertices2[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
-        vertices2[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
-     //   vertices2[(j+0)*4+2] = (GLfloat)(-cols/2);   //Z1
-     //   vertices2[(j+1)*4+2] = (GLfloat)(cols/2-1);  //Z2
-        vertices2[(j+0)*4+2] = (GLfloat)(-1.0f);   //Z1
-        vertices2[(j+1)*4+2] = (GLfloat)(1.0f);  //Z2
-        vertices2[(j+0)*4+3] = 1.0f;
-        vertices2[(j+1)*4+3] = 1.0f;
-        qDebug() << vertices2[(j+0)*4+0] << vertices2[(j+0)*4+1] << vertices2[(j+0)*4+2];
-        qDebug() << vertices2[(j+1)*4+0] << vertices2[(j+1)*4+1] << vertices2[(j+1)*4+2];
+        _gridVertices[(j+0)*4+0] = ((GLfloat)i)*space;           //X1
+        _gridVertices[(j+1)*4+0] = ((GLfloat)i)*space;           //X2
+        _gridVertices[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
+        _gridVertices[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
+        _gridVertices[(j+0)*4+2] = ((GLfloat)(-cols/2))*space;   //Z1
+        _gridVertices[(j+1)*4+2] = ((GLfloat)(cols/2-1))*space;  //Z2
+        _gridVertices[(j+0)*4+3] = 1.0f;
+        _gridVertices[(j+1)*4+3] = 1.0f;
     }
     //Następnie poziome
     for(float i= -cols/2; i<=(cols/2-1); i+=1.0f, j+=2)
     {
-    //    vertices2[(j+0)*4+0] = (GLfloat)(-rows/2);   //X1
-    //    vertices2[(j+1)*4+0] = (GLfloat)(rows/2-1);  //X2
-        vertices2[(j+0)*4+0] = (GLfloat)(-1.0f);           //X1
-        vertices2[(j+1)*4+0] = (GLfloat)(1.0f);           //X2
-        vertices2[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
-        vertices2[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
-    //    vertices2[(j+0)*4+2] = (GLfloat)i;           //Z1
-    //    vertices2[(j+1)*4+2] = (GLfloat)i;           //Z2
-        vertices2[(j+0)*4+2] = (GLfloat)(i/(float)cols);           //Z1
-        vertices2[(j+1)*4+2] = (GLfloat)(i/(float)cols);           //Z2
-        vertices2[(j+0)*4+3] = 1.0f;
-        vertices2[(j+1)*4+3] = 1.0f;
-        qDebug() << vertices2[(j+0)*4+0] << vertices2[(j+0)*4+1] << vertices2[(j+0)*4+2];
-        qDebug() << vertices2[(j+1)*4+0] << vertices2[(j+1)*4+1] << vertices2[(j+1)*4+2];
+        _gridVertices[(j+0)*4+0] = ((GLfloat)(-rows/2))*space;   //X1
+        _gridVertices[(j+1)*4+0] = ((GLfloat)(rows/2-1))*space;  //X2
+        _gridVertices[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
+        _gridVertices[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
+        _gridVertices[(j+0)*4+2] = ((GLfloat)i)*space;           //Z1
+        _gridVertices[(j+1)*4+2] = ((GLfloat)i)*space;           //Z2
+        _gridVertices[(j+0)*4+3] = 1.0f;
+        _gridVertices[(j+1)*4+3] = 1.0f;
     }
 
     //Dowiązanie
     _gridVAO.create();
-   // QOpenGLVertexArrayObject::Binder vaoB(&_gridVAO);
     _gridVAO.bind();
 
     _gridVBO.create();
     _gridVBO.setUsagePattern(QOpenGLBuffer::StaticDraw);
     _gridVBO.bind();
-   // _gridVBO.allocate(&vertices3,8*4*sizeof(GLfloat));
-    _gridVBO.allocate(vertices2,countOfElements*sizeof(GLfloat));
+    _gridVBO.allocate(_gridVertices,_gridCountOfVerts*4*sizeof(GLfloat));
 
         _program->enableAttributeArray(0);
         _program->setAttributeBuffer(0,GL_FLOAT,0,4);
-     //   QOpenGLFunctions * f = QOpenGLContext::currentContext()->functions();                       //Rejestrowanie w oknie
-     //   f->glEnableVertexAttribArray(0);//_gridVAO.objectId());
-     //   f->glVertexAttribPointer(0,4,GL_FLOAT,GL_FALSE, 0*sizeof(GLfloat), 0);
-   // _gridVBO.release();
-  //  _gridVAO.release();
-
-    //delete [] vertices;
 }
 
 void MapViewer::clean()

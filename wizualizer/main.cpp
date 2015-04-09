@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     format.setDepthBufferSize(24);
     format.setStencilBufferSize(8);
     format.setVersion(3,3);
-    format.setSamples(1);
+    format.setSamples(2);
     format.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(format);
 

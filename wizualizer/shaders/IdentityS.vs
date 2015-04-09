@@ -1,12 +1,12 @@
 #version 150
 
-uniform mat4 MVP;
+uniform mat4 Mmove;
+uniform mat4 Mproj;
 
 in vec4 vVertex;
 
 
 void main()
 {
-	vec4 vertex = MVP * vVertex;
-	gl_Position.xyz = vertex.xyz;
+	gl_Position = Mproj * Mmove * vVertex;
 }

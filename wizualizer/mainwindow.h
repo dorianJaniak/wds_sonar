@@ -21,6 +21,9 @@ public:
 private:
     Ui::MainWindow *ui;
     MapViewer *_monitor;
+
+private slots:
+    void on_actionLoadFromSimFile_triggered();
 };
 
 #endif // MAINWINDOW_H

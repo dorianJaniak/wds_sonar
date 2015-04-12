@@ -46,14 +46,15 @@ void MapViewer::initializeGL()
     glClearColor(0.0f,0.1f,0.4f,1.0f);
 
     _program = new QOpenGLShaderProgram;
-    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/IdentityS.vs");
-    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/IdentityS.fs");
+    _program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/colorS.vs");
+    _program->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/colorS.fs");
     _program->bindAttributeLocation("vVertex",0);
     _program->link();
     _program->bind();
 
     _projMatID = _program->uniformLocation("Mproj");
     _centerMoveMatID = _program->uniformLocation("Mmove");
+    _materialColorID = _program->uniformLocation("materialColor");
 
     addTestTriangle();
     addGrid();
@@ -71,11 +72,13 @@ void MapViewer::paintGL()
     _program->bind();
     _program->setUniformValue(_projMatID, _projMat);
     _program->setUniformValue(_centerMoveMatID, _centerMoveMat);
+    _program->setUniformValue(_materialColorID, QVector4D(0.0f,1.0f,0.0f,1.0f));
 
     f->glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 
     _gridVAO.bind();
     _program->bind();
+    _program->setUniformValue(_materialColorID, QVector4D(1.0f,1.0f,1.0f,1.0f));
     f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
     _program->release();
 }

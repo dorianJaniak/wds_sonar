@@ -39,6 +39,7 @@ private:
     QMatrix4x4 _centerMoveMat;
     GLuint _projMatID;
     GLuint _centerMoveMatID;
+    GLuint _materialColorID;
 
     QOpenGLVertexArrayObject _vao;
     QOpenGLBuffer _vbo;

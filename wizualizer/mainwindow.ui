@@ -29,6 +29,13 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuPlik">
+    <property name="title">
+     <string>Plik</string>
+    </property>
+    <addaction name="actionLoadFromSimFile"/>
+   </widget>
+   <addaction name="menuPlik"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -45,6 +52,11 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents"/>
   </widget>
+  <action name="actionLoadFromSimFile">
+   <property name="text">
+    <string>Załaduj z pliku symulacyjnego</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

@@ -26,6 +26,10 @@ protected:
     void paintGL() Q_DECL_OVERRIDE;
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
+    void mouseMoveEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent * event) Q_DECL_OVERRIDE;
+    void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
+
 private:
     void addTestTriangle();
     void addGrid(float space = 0.5f, int rows = 10, int cols = 10);
@@ -34,16 +38,27 @@ private:
 
     QOpenGLFunctions * f;
 
+    //Shadery
     QOpenGLShaderProgram * _program;
+    GLuint _materialColorID;
+
+    //Ustawienie widoku
     QMatrix4x4 _projMat;
     QMatrix4x4 _centerMoveMat;
     GLuint _projMatID;
     GLuint _centerMoveMatID;
-    GLuint _materialColorID;
+    GLfloat _cameraAngleX;
+    GLfloat _cameraAngleY;
+    GLfloat _cameraFar;
+    QPoint _mouseLastPos;
 
+    //Przykladowy obiekt
     QOpenGLVertexArrayObject _vao;
     QOpenGLBuffer _vbo;
 
+    //Siatka - obiekt
+    QOpenGLVertexArrayObject _gridVAO;
+    QOpenGLBuffer _gridVBO;
     unsigned int _gridCountOfVerts;
     GLfloat * _gridVertices;
 
@@ -52,10 +67,10 @@ private:
     //QOpenGLShaderProgram * _gridProgram;
     //QOpenGLShaderProgram * _robotProgram;
     //QVector<QOpenGLBuffer> _mapsVBO;      //Na jedno VAO przypadnie więcej niż jedno VBO, ponieważ siatka może być rozerwana (gdy duża odległość)
-    QOpenGLBuffer _gridVBO;
+
     //QOpenGLBuffer _robotVBO;
     //QVector<QOpenGLVertexArrayObject> _mapsVAO;
-    QOpenGLVertexArrayObject _gridVAO;
+
     //QOpenGLVertexArrayObject _robotVAO;
 
     //Do poprawy:

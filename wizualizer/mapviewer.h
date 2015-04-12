@@ -32,7 +32,7 @@ protected:
 
 private:
     void addTestTriangle();
-    void addGrid(float space = 0.5f, int rows = 10, int cols = 10);
+    void addGrid(float space = 1.0f, int rows = 11, int cols = 11);
 
     void clean();
 

@@ -19,7 +19,7 @@ MapViewer::MapViewer(QWidget * parent) :
 {
     _cameraAngleX = 0.0f;
     _cameraAngleY = 0.0f;
-    _cameraFar = -1.0f;
+    _cameraFar = -2.0f;
 }
 
 MapViewer::~MapViewer()
@@ -114,10 +114,10 @@ void MapViewer::mouseMoveEvent(QMouseEvent * event)
     int dx = event->x() - _mouseLastPos.x();
     int dy = event->y() - _mouseLastPos.y();
 
-    if(dy < -2) _cameraAngleX -= 4.0f;
-    else if(dy > 2) _cameraAngleX += 4.0f;
-    if(dx < -2) _cameraAngleY -= 4.0f;
-    else if(dx > 2) _cameraAngleY += 4.0f;
+    if(dy < -2) _cameraAngleX -= 3.5f;
+    else if(dy > 2) _cameraAngleX += 3.5f;
+    if(dx < -2) _cameraAngleY -= 3.5f;
+    else if(dx > 2) _cameraAngleY += 3.5f;
 
     if(_cameraAngleX > 360.0f) _cameraAngleX -= 360.0f;
     else if(_cameraAngleX < -360.0f) _cameraAngleX += 360.0f;
@@ -131,8 +131,8 @@ void MapViewer::mouseMoveEvent(QMouseEvent * event)
 void MapViewer::wheelEvent(QWheelEvent * event)
 {
     int delta = event->delta();
-    if(delta > 0 && _cameraFar < -0.2f) _cameraFar *= 0.85f;
-    else if(delta < 0 && _cameraFar > -10.0f) _cameraFar *= 1.2f;
+    if(delta > 0 && _cameraFar < -0.4f) _cameraFar *= 0.85f;
+    else if(delta < 0 && _cameraFar > -20.0f) _cameraFar *= 1.2f;
     update();
 }
 
@@ -155,22 +155,22 @@ void MapViewer::addGrid(float space, int rows, int cols)
     _gridVertices = new GLfloat[_gridCountOfVerts*4];
     int j=0;
     //Najpierw pionowe
-    for(float i= -rows/2; i<=(rows/2-1); i+=1.0f, j+=2)
+    for(float i= -(float)rows/2; i<=((float)rows/2-1); i+=1.0f, j+=2)
     {
         _gridVertices[(j+0)*4+0] = ((GLfloat)i)*space;           //X1
         _gridVertices[(j+1)*4+0] = ((GLfloat)i)*space;           //X2
         _gridVertices[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
         _gridVertices[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
-        _gridVertices[(j+0)*4+2] = ((GLfloat)(-cols/2))*space;   //Z1
-        _gridVertices[(j+1)*4+2] = ((GLfloat)(cols/2-1))*space;  //Z2
+        _gridVertices[(j+0)*4+2] = ((GLfloat)(-(float)cols/2))*space;   //Z1
+        _gridVertices[(j+1)*4+2] = ((GLfloat)((float)cols/2-1))*space;  //Z2
         _gridVertices[(j+0)*4+3] = 1.0f;
         _gridVertices[(j+1)*4+3] = 1.0f;
     }
     //Następnie poziome
-    for(float i= -cols/2; i<=(cols/2-1); i+=1.0f, j+=2)
+    for(float i= -(float)cols/2; i<=((float)cols/2-1); i+=1.0f, j+=2)
     {
-        _gridVertices[(j+0)*4+0] = ((GLfloat)(-rows/2))*space;   //X1
-        _gridVertices[(j+1)*4+0] = ((GLfloat)(rows/2-1))*space;  //X2
+        _gridVertices[(j+0)*4+0] = ((GLfloat)(-(float)rows/2))*space;   //X1
+        _gridVertices[(j+1)*4+0] = ((GLfloat)((float)rows/2-1))*space;  //X2
         _gridVertices[(j+0)*4+1] = (GLfloat)0.0f;         //Y1
         _gridVertices[(j+1)*4+1] = (GLfloat)0.0f;         //Y2
         _gridVertices[(j+0)*4+2] = ((GLfloat)i)*space;           //Z1

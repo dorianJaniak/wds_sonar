@@ -1,4 +1,5 @@
 #include "filecontroller.h"
+#include "globalvariables.h"
 
 #include <QFile>
 #include <QDebug>
@@ -13,23 +14,23 @@ FileController::~FileController()
 
 }
 
-float * FileController::getFromCSVFile(const QString & fileName)
+QVector<QVector4D> *FileController::loadSensorDataFromFile(const QString & fileName)
 {
+    QStringList allFields = getFromCSVFile(fileName);
+    return reinterpretW00(allFields);
+}
+
+QStringList FileController::getFromCSVFile(const QString & fileName)
+{
+    QStringList allFields;
     QFile file(fileName);
     if(!file.exists())
-        return nullptr;
+        return allFields;
     if(file.open(QFile::ReadOnly))
     {
         QString allData = file.readAll();
-        QStringList allFields = allData.split(';');
+        allFields = allData.split(';');
         file.close();
-
-        for(int i=0; i<allFields.size(); i++)
-            qDebug() << allFields.at(i);
     }
-    else
-        return nullptr;
-
-
-
+    return allFields;
 }

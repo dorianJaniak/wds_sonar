@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "filecontroller.h"
+
 
 #include <QFileDialog>
 
@@ -22,6 +22,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoadFromSimFile_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,tr("Wczytaj plik symulacyjny"),".",tr("Plik symulacyjny (*)"));
-    FileController::getFromCSVFile(fileName);
- //   if()
+    QVector<QVector4D> * verts = _fileController.loadSensorDataFromFile(fileName);
+
+
 }

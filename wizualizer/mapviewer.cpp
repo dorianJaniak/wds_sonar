@@ -144,7 +144,7 @@ void MapViewer::addTestTriangle()
     _vbo.create();
     _gridVBO.setUsagePattern(QOpenGLBuffer::StaticDraw);
     _vbo.bind();
-    _vbo.allocate(&vertices,4*4*sizeof(GLfloat));
+    _vbo.allocate(vertices,4*4*sizeof(GLfloat));
         _program->enableAttributeArray(0);
         _program->setAttributeArray(0,GL_FLOAT,0,4);
 }

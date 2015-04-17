@@ -16,10 +16,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
         mapviewer.cpp \
-    filecontroller.cpp
+    filecontroller.cpp \
+    mapcontroller.cpp \
+    messagecontroller.cpp
 
 HEADERS  += mainwindow.h \
     mapviewer.h \
-    filecontroller.h
+    filecontroller.h \
+    globalvariables.h \
+    mapcontroller.h \
+    messagecontroller.h
 
 FORMS    += mainwindow.ui

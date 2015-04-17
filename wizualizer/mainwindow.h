@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "mapviewer.h"
+#include "filecontroller.h"
+#include "mapcontroller.h"
 
 class OpenGLWindow;
 
@@ -21,6 +23,8 @@ public:
 private:
     Ui::MainWindow *ui;
     MapViewer *_monitor;
+    FileController _fileController;
+    MapController _mapController;
 
 private slots:
     void on_actionLoadFromSimFile_triggered();

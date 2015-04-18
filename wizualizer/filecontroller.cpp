@@ -4,7 +4,7 @@
 #include <QFile>
 #include <QDebug>
 
-FileController::FileController()
+FileController::FileController(QObject *parent) : m_parent(parent)
 {
 
 }
@@ -29,6 +29,7 @@ QStringList FileController::getFromCSVFile(const QString & fileName)
     if(file.open(QFile::ReadOnly))
     {
         QString allData = file.readAll();
+        emit sendLog(tr("WIADOMOŚĆ: ") + allData);
         allFields = allData.split(';');
         file.close();
     }

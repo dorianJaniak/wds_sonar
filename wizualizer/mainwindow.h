@@ -28,6 +28,8 @@ private:
 
 private slots:
     void on_actionLoadFromSimFile_triggered();
+
+    void showLog(QString caption, QVector<ErrorType> errors = QVector<ErrorType>());
 };
 
 #endif // MAINWINDOW_H

@@ -3,49 +3,26 @@
 
 #include <QString>
 #include <QVector>
-#include <QCoreApplication>
+#include <QObject>
+
+
 class QVector4D;
-
-
 
 enum MessageTypes {
     w00_map_data = 0
 };
+
 enum ErrorType {
-    e00_lost_parametr = 0,
-    e01_no_header,
-    e02_wrong_header,
-    e03_wrong_count_of_args,
+    e00_problem_header = 0,
+    e01_problem_params,
+    e02_lost_param,
 
-    e_no_error,
-    e_no_error_with_this_index
+    e_no_error
 };
 
-class MessageStateInfo {
-    Q_DECLARE_TR_FUNCTIONS(MessageStateInfo)
-
-public:
-    static QString m_eNames[];
-
-    MessageStateInfo(MessageTypes type);
-    MessageStateInfo() {};          //TO TRZA SPRAWDZIC
-    void addError(ErrorType type);
-    ErrorType getError(int indeks);
-    QString& getErrorCaption(int indeks);
-    QStringList getErrorsCaptions();
-    unsigned int getErrorsCount();
-    unsigned int getID();
-
-private:
-    QVector<ErrorType> m_errors;
-    static unsigned int m_counter;
-    unsigned int m_id;
-    MessageTypes m_messType;
-};
-
-class MessageController
+class MessageController : public QObject
 {
-    QVector<MessageStateInfo> m_states;
+    Q_OBJECT
     static QString m_wNames[];
 public:
 
@@ -53,6 +30,10 @@ public:
     MessageController();
     ~MessageController();
     QVector<QVector4D> * reinterpretW00(QStringList & allFields);
+
+signals:
+    void sendLog(QString caption, QVector<ErrorType> errors = QVector<ErrorType>());
+
 };
 
 #endif // MESSAGECONTROLLER_H

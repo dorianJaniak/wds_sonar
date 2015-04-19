@@ -17,14 +17,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         mapviewer.cpp \
     filecontroller.cpp \
-    mapcontroller.cpp \
-    messagecontroller.cpp
+    messagecontroller.cpp \
+    envmap.cpp
 
 HEADERS  += mainwindow.h \
     mapviewer.h \
     filecontroller.h \
     globalvariables.h \
-    mapcontroller.h \
-    messagecontroller.h
+    messagecontroller.h \
+    envmap.h
 
 FORMS    += mainwindow.ui

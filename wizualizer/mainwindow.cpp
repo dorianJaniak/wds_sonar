@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -36,8 +35,14 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoadFromSimFile_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,tr("Wczytaj plik symulacyjny"),".",tr("Plik symulacyjny (*)"));
-    QVector<QVector4D> * verts = _fileController.loadSensorDataFromFile(fileName);
-
+    QVector<QVector<QVector4D>*> * verts = _fileController.loadSensorDataFromFile(fileName);
+    if(verts==nullptr)
+        QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się załadować pliku symulacyjnego"));
+    else
+    {
+        _monitor->addEnvMap(verts,QVector4D(0.0f,0.0f,0.0f,1.0f));
+        delete verts;
+    }
 }
 
 void MainWindow::showLog(QString caption, QVector<ErrorType> errors)

@@ -1,4 +1,5 @@
 #include "mapviewer.h"
+#include "envmap.h"
 
 #include <QOpenGLContext>
 #include <QDebug>
@@ -11,11 +12,11 @@ const GLfloat vertices [] = {
     -0.3f, -0.4f, 0.0f, 1.0f
 };
 
-
 MapViewer::MapViewer(QWidget * parent) :
     QOpenGLWidget(parent),
     _vao(parent),
-    _gridVAO(parent)
+    _gridVAO(parent),
+    m_parent(parent)
 {
     _cameraAngleX = 0.0f;
     _cameraAngleY = 0.0f;
@@ -42,8 +43,6 @@ void MapViewer::initializeGL()
     f = QOpenGLContext::currentContext()->functions();
     initializeOpenGLFunctions();
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &MapViewer::clean);
-
-
 
     glClearColor(0.0f,0.1f,0.4f,1.0f);
 
@@ -89,6 +88,16 @@ void MapViewer::paintGL()
     _program->bind();
     _program->setUniformValue(_materialColorID, QVector4D(1.0f,1.0f,1.0f,1.0f));
     f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
+
+
+    for(int i=0; i<m_mapsVAOs.size(); i++)
+    {
+        m_mapsVAOs[i]->bind();
+        _program->bind();
+        _program->setUniformValue(_materialColorID,QVector4D(1.0f,0.0f,0.0f,1.0f));
+        f->glDrawArrays(GL_LINE_STRIP,0,m_maps[i]->getAllVertsCount());
+    }
+
     _program->release();
 }
 
@@ -99,9 +108,6 @@ void MapViewer::resizeGL(int width, int height)
    // kat += 2.0f;
     _projMat.setToIdentity();
     _projMat.perspective(60.0f,(float)(width)/(float)height, 0.01f,100.0f);
-
-
-
 }
 
 void MapViewer::mousePressEvent(QMouseEvent * event)
@@ -190,6 +196,31 @@ void MapViewer::addGrid(float space, int rows, int cols)
 
         _program->enableAttributeArray(0);
         _program->setAttributeBuffer(0,GL_FLOAT,0,4);
+}
+
+void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center)
+{
+    makeCurrent();
+    m_maps.push_back(new EnvMap(verts,center));
+    m_mapsVAOs.push_back(new QOpenGLVertexArrayObject(m_parent));
+    m_mapsVAOs.back()->create();
+    m_mapsVAOs.back()->bind();
+    m_mapsVBOs.push_back(QVector<QOpenGLBuffer*>());
+
+    for(int i=0; i<m_maps.back()->getMeshesCount(); i++)
+    {
+        QOpenGLBuffer * refBuffer = new QOpenGLBuffer();
+        refBuffer->create();
+        refBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
+        refBuffer->bind();
+        refBuffer->allocate(m_maps.back()->getVerts(i),m_maps.back()->getVertsCount(i)*4*sizeof(GLfloat));
+
+        _program->enableAttributeArray(0);
+        _program->setAttributeBuffer(0,GL_FLOAT,0,4);
+
+        m_mapsVBOs.back().push_back(refBuffer);
+    }
+    doneCurrent();
 }
 
 void MapViewer::clean()

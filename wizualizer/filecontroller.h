@@ -14,7 +14,7 @@ public:
     FileController(QObject * parent = 0);
     ~FileController();
 
-    QVector<QVector4D> * loadSensorDataFromFile(const QString & fileName);
+    QVector<QVector<QVector4D> *> *loadSensorDataFromFile(const QString & fileName);
     QStringList getFromCSVFile(const QString & fileName);
 };
 

@@ -10,16 +10,20 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 
+class EnvMap;
 
 class MapViewer : public QOpenGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
+    QObject * m_parent;
 public:
     MapViewer(QWidget *parent = 0);
     ~MapViewer();
 
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
+
+    void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center);
 
 protected:
     void initializeGL() Q_DECL_OVERRIDE;
@@ -33,6 +37,7 @@ protected:
 private:
     void addTestTriangle();
     void addGrid(float space = 1.0f, int rows = 11, int cols = 11);
+
 
     void clean();
 
@@ -62,6 +67,10 @@ private:
     unsigned int _gridCountOfVerts;
     GLfloat * _gridVertices;
 
+    //Mapy - obiekty
+    QVector<EnvMap*> m_maps;
+    QVector<QOpenGLVertexArrayObject*> m_mapsVAOs;
+    QVector<QVector<QOpenGLBuffer*>> m_mapsVBOs;
     //New
     //QOpenGLShaderProgram * _mapProgram;
     //QOpenGLShaderProgram * _gridProgram;

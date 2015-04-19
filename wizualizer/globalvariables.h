@@ -1,12 +1,10 @@
 #ifndef GLOBALVARIABLES
 #define GLOBALVARIABLES
 
-#include <QString>
-#include <QVector>
-#include <QVector4D>
+const float g_maxFar = 200.0f;  ///Pomiar ponad g_maxFar centymetrów będzie uznany za nieprawidłowy
 
-typedef QVector<QVector4D> EnvMap;
-typedef QVector<QVector<float>> RawMap;
+
+
 
 
 

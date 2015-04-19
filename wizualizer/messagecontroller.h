@@ -29,7 +29,7 @@ public:
 
     MessageController();
     ~MessageController();
-    QVector<QVector4D> * reinterpretW00(QStringList & allFields);
+    QVector<QVector<QVector4D>*> * reinterpretW00(QStringList & allFields);
 
 signals:
     void sendLog(QString caption, QVector<ErrorType> errors = QVector<ErrorType>());

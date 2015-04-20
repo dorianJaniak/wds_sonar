@@ -23,7 +23,7 @@ public:
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
     QSize sizeHint() const Q_DECL_OVERRIDE;
 
-    void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center);
+    void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center, bool allowToModifyY = true);
 
 protected:
     void initializeGL() Q_DECL_OVERRIDE;
@@ -36,10 +36,11 @@ protected:
 
 private:
     void addTestTriangle();
-    void addGrid(float space = 1.0f, int rows = 11, int cols = 11);
-
+    void addGrid(float space = 1.0f, int rows = 10, int cols = 10);
 
     void clean();
+
+    QVector4D countColor(int objIndex);
 
     QOpenGLFunctions * f;
 
@@ -56,6 +57,7 @@ private:
     GLfloat _cameraAngleY;
     GLfloat _cameraFar;
     QPoint _mouseLastPos;
+    QVector4D m_backgroundColor;
 
     //Przykladowy obiekt
     QOpenGLVertexArrayObject _vao;
@@ -66,10 +68,11 @@ private:
     QOpenGLBuffer _gridVBO;
     unsigned int _gridCountOfVerts;
     GLfloat * _gridVertices;
+    QVector4D m_gridColor;
 
     //Mapy - obiekty
     QVector<EnvMap*> m_maps;
-    QVector<QOpenGLVertexArrayObject*> m_mapsVAOs;
+    QVector<QVector<QOpenGLVertexArrayObject*>> m_mapsVAOs;
     QVector<QVector<QOpenGLBuffer*>> m_mapsVBOs;
     //New
     //QOpenGLShaderProgram * _mapProgram;

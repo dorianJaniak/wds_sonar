@@ -1,5 +1,6 @@
 #include "mapviewer.h"
 #include "envmap.h"
+#include "globalvariables.h"
 
 #include <QOpenGLContext>
 #include <QDebug>
@@ -16,7 +17,9 @@ MapViewer::MapViewer(QWidget * parent) :
     QOpenGLWidget(parent),
     _vao(parent),
     _gridVAO(parent),
-    m_parent(parent)
+    m_parent(parent),
+    m_gridColor(g_gridColor),
+    m_backgroundColor(g_backgroundColor)
 {
     _cameraAngleX = 0.0f;
     _cameraAngleY = 0.0f;
@@ -25,7 +28,7 @@ MapViewer::MapViewer(QWidget * parent) :
 
 MapViewer::~MapViewer()
 {
-
+    clean();
 }
 
 QSize MapViewer::minimumSizeHint() const
@@ -44,7 +47,7 @@ void MapViewer::initializeGL()
     initializeOpenGLFunctions();
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &MapViewer::clean);
 
-    glClearColor(0.0f,0.1f,0.4f,1.0f);
+    glClearColor(m_backgroundColor.x(),m_backgroundColor.y(),m_backgroundColor.z(),m_backgroundColor.w());
 
     _program = new QOpenGLShaderProgram;
     _program->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/colorS.vs");
@@ -75,7 +78,6 @@ void MapViewer::paintGL()
     _centerMoveMat.rotate(_cameraAngleX, 1.0f,0.0f,0.0f);
     _centerMoveMat.rotate(_cameraAngleY, 0.0f,1.0f,0.0f);
 
-
     _vao.bind();
     _program->bind();
     _program->setUniformValue(_projMatID, _projMat);
@@ -86,16 +88,29 @@ void MapViewer::paintGL()
 
     _gridVAO.bind();
     _program->bind();
-    _program->setUniformValue(_materialColorID, QVector4D(1.0f,1.0f,1.0f,1.0f));
-    f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
+    _program->setUniformValue(_materialColorID, m_gridColor);
+    f->glEnable(GL_LINE_SMOOTH);
+    f->glLineWidth(g_gridLineWidth);
 
+    f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
+    f->glDisable(GL_LINE_SMOOTH);
 
     for(int i=0; i<m_mapsVAOs.size(); i++)
     {
-        m_mapsVAOs[i]->bind();
-        _program->bind();
-        _program->setUniformValue(_materialColorID,QVector4D(1.0f,0.0f,0.0f,1.0f));
-        f->glDrawArrays(GL_LINE_STRIP,0,m_maps[i]->getAllVertsCount());
+        for(int j=0; j<m_mapsVAOs.at(i).size(); j++)
+        {
+            (m_mapsVAOs[i])[j]->bind();
+            _program->bind();
+            QMatrix4x4 objMatrix = m_maps[i]->getTranslationMatrix();
+            objMatrix =  _centerMoveMat * objMatrix;
+            _program->setUniformValue(_centerMoveMatID, objMatrix);
+            _program->setUniformValue(_materialColorID,m_maps[i]->getMaterialColor());
+            f->glEnable(GL_LINE_SMOOTH);
+            f->glLineWidth(g_mapLineWidth);
+
+            f->glDrawArrays(GL_LINE_STRIP,0,m_maps[i]->getVertsCount(j));
+            f->glDisable(GL_LINE_SMOOTH);
+        }
     }
 
     _program->release();
@@ -103,9 +118,6 @@ void MapViewer::paintGL()
 
 void MapViewer::resizeGL(int width, int height)
 {
-   // static float kat = 0.0f;
-   // if(kat > 360.0f) kat-=360.0f;
-   // kat += 2.0f;
     _projMat.setToIdentity();
     _projMat.perspective(60.0f,(float)(width)/(float)height, 0.01f,100.0f);
 }
@@ -198,17 +210,23 @@ void MapViewer::addGrid(float space, int rows, int cols)
         _program->setAttributeBuffer(0,GL_FLOAT,0,4);
 }
 
-void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center)
+void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center, bool allowToModifyY)
 {
+    static int mapNo = 0;
+    float upGo = mapNo*g_yMapStep;
+    while(upGo>1.0f) upGo -= 1.0f;
+
     makeCurrent();
-    m_maps.push_back(new EnvMap(verts,center));
-    m_mapsVAOs.push_back(new QOpenGLVertexArrayObject(m_parent));
-    m_mapsVAOs.back()->create();
-    m_mapsVAOs.back()->bind();
-    m_mapsVBOs.push_back(QVector<QOpenGLBuffer*>());
+    m_maps.push_back(new EnvMap(verts,countColor(mapNo),center+QVector4D(0.0f,upGo,0.0f,0.0f)));
+
+    m_mapsVAOs.push_back(QVector<QOpenGLVertexArrayObject*> ());
+    m_mapsVBOs.push_back(QVector<QOpenGLBuffer*> ());
 
     for(int i=0; i<m_maps.back()->getMeshesCount(); i++)
     {
+        QOpenGLVertexArrayObject * refArray = new QOpenGLVertexArrayObject(m_parent);
+        refArray->create();
+        refArray->bind();
         QOpenGLBuffer * refBuffer = new QOpenGLBuffer();
         refBuffer->create();
         refBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
@@ -218,9 +236,12 @@ void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center
         _program->enableAttributeArray(0);
         _program->setAttributeBuffer(0,GL_FLOAT,0,4);
 
+        m_mapsVAOs.back().push_back(refArray);
         m_mapsVBOs.back().push_back(refBuffer);
     }
     doneCurrent();
+
+    mapNo++;
 }
 
 void MapViewer::clean()
@@ -228,7 +249,32 @@ void MapViewer::clean()
     makeCurrent();
     _vbo.destroy();
     _gridVBO.destroy();
+    _vao.destroy();
+    _gridVAO.destroy();
+    m_maps.clear();
+    m_mapsVAOs.clear();
+    m_mapsVBOs.clear();
     delete _program;
     _program = 0;
     doneCurrent();
+}
+
+QVector4D MapViewer::countColor(int objIndex)
+{
+    float toAddColor = g_colorStep*objIndex;
+    if(toAddColor > (3.0f-g_startMapColor.x()+g_startMapColor.y()+g_startMapColor.z()))
+        objIndex = 0;
+    QVector4D color(g_startMapColor);
+    for(int i=2; i>=0; i--)
+        if( 1.0f - color[i] < toAddColor )
+        {
+            toAddColor -= (1.0f-color[i]);
+            color[i] += (1.0f-color[i]);
+        }
+        else
+        {
+            color[i] += toAddColor;
+            toAddColor = 0.0f;
+        }
+    return color;
 }

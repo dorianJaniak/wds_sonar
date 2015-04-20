@@ -1,7 +1,8 @@
 #include "envmap.h"
 
-EnvMap::EnvMap( QVector<QVector<QVector4D>*>* verts, QVector4D center) :
-    m_centerPos(center)
+EnvMap::EnvMap(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D center) :
+    m_centerPos(center),
+    m_colorMaterial(color)
 {
     m_allVertsCount = 0;
     for(int i=0; i<verts->size(); i++)
@@ -59,4 +60,9 @@ QMatrix4x4 EnvMap::getTranslationMatrix()
     result.setToIdentity();
     result.translate(m_centerPos.x(),m_centerPos.y(),m_centerPos.z());
     return result;
+}
+
+QVector4D EnvMap::getMaterialColor()
+{
+    return m_colorMaterial;
 }

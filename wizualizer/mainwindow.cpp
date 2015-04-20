@@ -35,6 +35,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoadFromSimFile_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,tr("Wczytaj plik symulacyjny"),".",tr("Plik symulacyjny (*)"));
+    if(fileName.isEmpty())
+        return;
     QVector<QVector<QVector4D>*> * verts = _fileController.loadSensorDataFromFile(fileName);
     if(verts==nullptr)
         QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się załadować pliku symulacyjnego"));

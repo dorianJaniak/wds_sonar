@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
 #include "mapviewer.h"
 #include "filecontroller.h"
+#include "robotcontroller.h"
+#include "globalvariables.h"
 
 class OpenGLWindow;
 
@@ -26,29 +29,33 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    /**
-     * @brief Wskaźnik na widżet obsługujący widok 3D.
-     */
-    MapViewer * m_monitor;
-    /**
-     * @brief Obsługa plików dyskowych.
-     * Umożliwia wczytywanie danych.
-     */
-    FileController m_fileController;
+    MapViewer * m_monitor;                  ///Wskaźnik na widżet obsługujący widok 3D.
+    FileController m_fileController;        ///Obsługa plików dysków. Umożliwia wczytywanie danych.
+    RobotController m_robotController;      ///Obsługa robota poprzez interfejs Bluetooth.
 
+    QTimer m_buttonHoldTimer;               ///Odliczanie czasu trzymania przycisku
+    RobotOrientation m_diffOrientation;     ///Przekazywana do aktualizowania widoku zmienna
+    MoveType m_moveType;                    ///Zliczany aktualnie ruch
 private slots:
-    /**
+                        /**
      * @brief Menu-Plik-Załaduj z pliku symulacyjnego
      * Reakcja na rządanie załadowania pliku symulacyjnego.
      */
     void on_actionLoadFromSimFile_triggered();
 
-    /**
+                        /**
      * @brief Funkcja dodająca logi o opisie caption oraz opcjonalnej liście błędów errors.
      * @param caption Opis komunikatu
      * @param errors Wektor błędów
      */
     void showLog(QString caption, QVector<ErrorType> errors = QVector<ErrorType>());
+    void on_forwardButton_pressed();
+    void on_forwardButton_released();
+    void requestRobotMove();
+    void on_rightButton_pressed();
+    void on_rightButton_released();
+    void on_leftButton_pressed();
+    void on_leftButton_released();
 };
 
 #endif // MAINWINDOW_H

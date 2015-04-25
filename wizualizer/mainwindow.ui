@@ -62,7 +62,47 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents"/>
+   <widget class="QWidget" name="dockWidgetContents">
+    <widget class="QToolButton" name="leftButton">
+     <property name="geometry">
+      <rect>
+       <x>14</x>
+       <y>40</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;-</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="rightButton">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>38</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>-&gt;</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="forwardButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>60</y>
+       <width>41</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>A</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="LogWidget">
    <property name="minimumSize">

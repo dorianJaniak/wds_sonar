@@ -13,8 +13,13 @@ const QVector4D g_startMapColor(0.3f,0.3f,1.0f,1.0f); ///Kolor względem, które
 const QVector4D g_backgroundColor(0.05f,0.05f,0.2f,1.0f); ///Domyślny kolor tła
 const QVector4D g_gridColor(0.6f,0.6f,0.6f,1.0f); ///Domyślny kolor siatki
 
-
-
+enum MoveType {
+    stop = 0,
+    moveForward,
+    moveRight,
+    moveLeft,
+    moveBack
+};
 
 
 

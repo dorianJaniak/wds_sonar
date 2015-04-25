@@ -18,13 +18,17 @@ SOURCES += main.cpp\
         mapviewer.cpp \
     filecontroller.cpp \
     messagecontroller.cpp \
-    envmap.cpp
+    envmap.cpp \
+    robotcontroller.cpp \
+    bluetoothcontroller.cpp
 
 HEADERS  += mainwindow.h \
     mapviewer.h \
     filecontroller.h \
     globalvariables.h \
     messagecontroller.h \
-    envmap.h
+    envmap.h \
+    robotcontroller.h \
+    bluetoothcontroller.h
 
 FORMS    += mainwindow.ui

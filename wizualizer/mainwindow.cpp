@@ -19,12 +19,12 @@ const QString MsgPriorityColors[] = {
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _fileController(parent)
+    m_fileController(parent)
 {
     ui->setupUi(this);
-    _monitor = ui->mainView;
+    m_monitor = ui->mainView;
 
-    connect(&_fileController,SIGNAL(sendLog(QString,QVector<ErrorType>)),this,SLOT(showLog(QString,QVector<ErrorType>)));
+    connect(&m_fileController,SIGNAL(sendLog(QString,QVector<ErrorType>)),this,SLOT(showLog(QString,QVector<ErrorType>)));
 }
 
 MainWindow::~MainWindow()
@@ -37,12 +37,12 @@ void MainWindow::on_actionLoadFromSimFile_triggered()
     QString fileName = QFileDialog::getOpenFileName(this,tr("Wczytaj plik symulacyjny"),".",tr("Plik symulacyjny (*)"));
     if(fileName.isEmpty())
         return;
-    QVector<QVector<QVector4D>*> * verts = _fileController.loadSensorDataFromFile(fileName);
+    QVector<QVector<QVector4D>*> * verts = m_fileController.loadSensorDataFromFile(fileName);
     if(verts==nullptr)
         QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się załadować pliku symulacyjnego"));
     else
     {
-        _monitor->addEnvMap(verts,QVector4D(0.0f,0.0f,0.0f,1.0f));
+        m_monitor->addEnvMap(verts,QVector4D(0.0f,0.0f,0.0f,1.0f));
         delete verts;
     }
 }

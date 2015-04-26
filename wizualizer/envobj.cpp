@@ -1,8 +1,9 @@
-#include "envmap.h"
+#include "envobj.h"
 
-EnvMap::EnvMap(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D center) :
+EnvObj::EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D center, QVector4D scale) :
     m_centerPos(center),
-    m_colorMaterial(color)
+    m_colorMaterial(color),
+    m_scale(scale)
 {
     m_allVertsCount = 0;
     for(int i=0; i<verts->size(); i++)
@@ -25,44 +26,58 @@ EnvMap::EnvMap(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D c
     }
 }
 
-EnvMap::~EnvMap()
+EnvObj::~EnvObj()
 {
 
 }
 
-unsigned int EnvMap::getMeshesCount()
+unsigned int EnvObj::getMeshesCount()
 {
     return m_vertices.size();
 }
 
-const float * EnvMap::getVerts(int meshIndex)
+const float * EnvObj::getVerts(int meshIndex)
 {
     if(m_vertices.size()>meshIndex)
         return m_vertices[meshIndex];
     return nullptr;
 }
 
-unsigned int EnvMap::getVertsCount(int meshIndex)
+unsigned int EnvObj::getVertsCount(int meshIndex)
 {
     if(m_verticesCount.size()>meshIndex)
         return m_verticesCount[meshIndex];
     return 0;
 }
 
-unsigned int EnvMap::getAllVertsCount()
+unsigned int EnvObj::getAllVertsCount()
 {
     return m_allVertsCount;
 }
 
-QMatrix4x4 EnvMap::getTranslationMatrix()
+QMatrix4x4 EnvObj::getTranslationMatrix()
 {
     QMatrix4x4 result;
     result.setToIdentity();
+
     result.translate(m_centerPos.x(),m_centerPos.y(),m_centerPos.z());
+    result.rotate(m_angleY+90.0f,0.0f,1.0f,0.0f);
+    result.scale(m_scale.x(),m_scale.y(),m_scale.z());
+
     return result;
 }
 
-QVector4D EnvMap::getMaterialColor()
+QVector4D EnvObj::getMaterialColor()
 {
     return m_colorMaterial;
+}
+
+void EnvObj::setCenter(QVector4D position)
+{
+    m_centerPos = position;
+}
+
+void EnvObj::setAngle(float angleY)
+{
+    m_angleY = angleY;
 }

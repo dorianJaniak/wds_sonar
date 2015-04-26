@@ -1,5 +1,5 @@
-#ifndef ENVMAP_H
-#define ENVMAP_H
+#ifndef EnvObj_H
+#define EnvObj_H
 
 #include<QVector4D>
 #include<QMatrix4x4>
@@ -12,13 +12,15 @@
  * Klasa przechowuje komplet informacji potrzebnych do wyrysowania
  * jednego wyniku skanowania terenu.
  */
-class EnvMap
+class EnvObj
 {
-    QVector<const GLfloat*> m_vertices;         ///@brief wektor tablic wierzchołków - jedna tablica odpowiada jednej części siatki
-    QVector<unsigned int> m_verticesCount;      ///@brief wektor ilości wierzchołków w poszczególnych tablicach
-    unsigned int m_allVertsCount;               ///@brief ilość wszystkich wierzchołków
-    QVector4D m_centerPos;                      ///@brief punkt środkowy obiektu we współrzędnych jednorodnych
-    QVector4D m_colorMaterial;                  ///@brief kolor materiału we współrzędnych RGBA
+    QVector<const GLfloat*> m_vertices;         ///wektor tablic wierzchołków - jedna tablica odpowiada jednej części siatki
+    QVector<unsigned int> m_verticesCount;      ///wektor ilości wierzchołków w poszczególnych tablicach
+    unsigned int m_allVertsCount;               ///ilość wszystkich wierzchołków
+    QVector4D m_centerPos;                      ///punkt środkowy obiektu we współrzędnych jednorodnych
+    QVector4D m_scale;                          ///przeskalowanie poszczególnych osi
+    QVector4D m_colorMaterial;                  ///kolor materiału we współrzędnych RGBA
+    float m_angleY;                             ///obrót obiektu wokół własnej osi Y
 
 public:
                             /**
@@ -27,8 +29,8 @@ public:
      * @param color kolor materiału
      * @param center punkt środkowy obiektu we współrzędnych jednorodnych (pozycja robota)
      */
-    EnvMap(QVector<QVector<QVector4D>*>* verts, QVector4D color = QVector4D(), QVector4D center = QVector4D(0.0f,0.0f,0.0f,1.0f));
-    ~EnvMap();
+    EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color = QVector4D(), QVector4D center = QVector4D(0.0f,0.0f,0.0f,1.0f), QVector4D scale = QVector4D(1.0f,1.0f,1.0f,1.0f));
+    ~EnvObj();
                             /**
      * @brief Zwraca ilość podsiatek, z których składa się obiekt
      * @return ilość podsiatek, z których składa się obiekt
@@ -62,6 +64,8 @@ public:
      */
     QVector4D getMaterialColor();
 
+    void setCenter(QVector4D position);
+    void setAngle(float angleY);
 };
 
-#endif // ENVMAP_H
+#endif // EnvObj_H

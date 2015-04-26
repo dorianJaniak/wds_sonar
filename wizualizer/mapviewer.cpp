@@ -1,5 +1,5 @@
 #include "mapviewer.h"
-#include "envmap.h"
+#include "envobj.h"
 #include "globalvariables.h"
 
 #include <QOpenGLContext>
@@ -24,6 +24,10 @@ MapViewer::MapViewer(QWidget * parent) :
     _cameraAngleX = 0.0f;
     _cameraAngleY = 0.0f;
     _cameraFar = -2.0f;
+    m_robotMesh = nullptr;
+    m_requestRobot = nullptr;
+    m_requestRobotVAO = nullptr;
+    m_requestRobotVBO = nullptr;
 }
 
 MapViewer::~MapViewer()
@@ -62,6 +66,7 @@ void MapViewer::initializeGL()
 
     addTestTriangle();
     addGrid();
+    addRequestRobot();
     _projMat.setToIdentity();
     _centerMoveMat.setToIdentity();
     _program->release();
@@ -83,7 +88,6 @@ void MapViewer::paintGL()
     _program->setUniformValue(_projMatID, _projMat);
     _program->setUniformValue(_centerMoveMatID, _centerMoveMat);
     _program->setUniformValue(_materialColorID, QVector4D(0.0f,1.0f,0.0f,1.0f));
-
     f->glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 
     _gridVAO.bind();
@@ -91,9 +95,19 @@ void MapViewer::paintGL()
     _program->setUniformValue(_materialColorID, m_gridColor);
     f->glEnable(GL_LINE_SMOOTH);
     f->glLineWidth(g_gridLineWidth);
-
     f->glDrawArrays(GL_LINES,0,_gridCountOfVerts);
     f->glDisable(GL_LINE_SMOOTH);
+
+    if(m_requestRobot != nullptr && m_requestRobotVAO != nullptr && m_requestRobotVBO != nullptr)
+    {
+        m_requestRobotVAO->bind();
+        _program->bind();
+        QMatrix4x4 requestRobotMat = m_requestRobot->getTranslationMatrix();
+        requestRobotMat =  _centerMoveMat * requestRobotMat;
+        _program->setUniformValue(_centerMoveMatID, requestRobotMat);
+        _program->setUniformValue(_materialColorID, m_requestRobot->getMaterialColor());
+        f->glDrawArrays(GL_TRIANGLES,0,m_requestRobot->getAllVertsCount());
+    }
 
     for(int i=0; i<m_mapsVAOs.size(); i++)
     {
@@ -242,6 +256,54 @@ void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center
     doneCurrent();
 
     mapNo++;
+}
+
+void MapViewer::addRequestRobot()
+{
+    if(m_robotMesh == nullptr)
+        return;
+    if(m_requestRobotVAO != nullptr)
+        delete m_requestRobotVAO;
+    if(m_requestRobotVBO != nullptr)
+        delete m_requestRobotVBO;
+    if(m_requestRobot != nullptr)
+        delete m_requestRobot;
+
+    QVector<QVector<QVector4D>*>* verts = new QVector<QVector<QVector4D>*>;
+    verts->push_back(m_robotMesh);
+    m_requestRobot = new EnvObj(verts,g_requestRobotColor,QVector4D(0,0,0,1),g_requestRobotScale);
+
+    makeCurrent();
+    m_requestRobotVAO = new QOpenGLVertexArrayObject(m_parent);
+    m_requestRobotVAO->create();
+    m_requestRobotVAO->bind();
+    m_requestRobotVBO = new QOpenGLBuffer();
+    m_requestRobotVBO->create();
+    m_requestRobotVBO->setUsagePattern(QOpenGLBuffer::StaticDraw);
+    m_requestRobotVBO->bind();
+    m_requestRobotVBO->allocate(m_requestRobot->getVerts(0),m_requestRobot->getAllVertsCount()*4*sizeof(GLfloat));
+    _program->enableAttributeArray(0);
+    _program->setAttributeBuffer(0,GL_FLOAT,0,4);
+
+    doneCurrent();
+
+
+}
+
+void MapViewer::setRobotMesh(QVector<QVector4D>* verts)
+{
+    if(m_robotMesh != nullptr && verts!=nullptr)
+        delete m_robotMesh;
+    m_robotMesh = verts;
+}
+
+void MapViewer::setRequestRobotOrientation(QVector4D position, float angleY)
+{
+    if(m_requestRobot != nullptr)
+    {
+        m_requestRobot->setCenter(position);
+        m_requestRobot->setAngle(angleY);
+    }
 }
 
 void MapViewer::clean()

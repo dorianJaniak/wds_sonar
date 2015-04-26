@@ -12,6 +12,8 @@ const float g_mapLineWidth = 1.0f; ///Szerokość linii mapy
 const QVector4D g_startMapColor(0.3f,0.3f,1.0f,1.0f); ///Kolor względem, którego będzie wyliczany kolor kolejnej podmapy
 const QVector4D g_backgroundColor(0.05f,0.05f,0.2f,1.0f); ///Domyślny kolor tła
 const QVector4D g_gridColor(0.6f,0.6f,0.6f,1.0f); ///Domyślny kolor siatki
+const QVector4D g_requestRobotColor(1.0f,1.0f,0.0f,1.0f);   ///Domyślny kolor robota tymczasowego
+const QVector4D g_requestRobotScale(0.1f,0.1f,0.1f,1.0f);   ///Domyślne skalowanie robota tymczasowego
 
 enum MoveType {
     stop = 0,

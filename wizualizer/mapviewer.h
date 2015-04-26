@@ -9,8 +9,11 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
+#include "envobj.h"
 
-class EnvMap;
+class EnvObj;
+typedef EnvObj EnvMap ;
+
 
 /**
  * @brief Klasa zarządzająca widokiem 3D
@@ -42,6 +45,10 @@ public:
      * @param allowToModifyY pozwolenie na "podnoszenie" kolejnych skanów względem osi Y
      */
     void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center, bool allowToModifyY = true);
+    void addRequestRobot();
+    void setRobotMesh(QVector<QVector4D>* verts);
+
+    void setRequestRobotOrientation(QVector4D position, float angleY);
 
 protected:
     void initializeGL() Q_DECL_OVERRIDE;
@@ -79,6 +86,7 @@ private:
      * @param cols ilość kolumn
      */
     void addGrid(float space = 1.0f, int rows = 10, int cols = 10);
+
 
                         /**
      * @brief Czyści środowisko
@@ -126,6 +134,12 @@ private:
     QVector<EnvMap*> m_maps;            ///wektor obiektów 3D otoczenia
     QVector<QVector<QOpenGLVertexArrayObject*>> m_mapsVAOs; ///zbiór VAO dla każdej podsiatki obiektów 3D otoczenia
     QVector<QVector<QOpenGLBuffer*>> m_mapsVBOs;            ///zbiór VBO dla każdej podsiatki obiektów 3D otoczenia
+
+    //Robot tymczasowy - gdy żądamy ruchu
+    QVector<QVector4D>* m_robotMesh;     ///Wskaźnik na wektor przechowujący siatkę obiektu 3D reprezentującego robota
+    EnvObj* m_requestRobot;              ///Obiekt robota tymczasowego, symbolizującego oczekiwaną pozycję robota
+    QOpenGLVertexArrayObject* m_requestRobotVAO;            ///VAO dla robota tymczasowego
+    QOpenGLBuffer* m_requestRobotVBO;                       ///VBO dla robota tymczasowego
     //New
     //QOpenGLShaderProgram * _mapProgram;
     //QOpenGLShaderProgram * _gridProgram;

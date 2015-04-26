@@ -28,14 +28,18 @@ public:
     ~MainWindow();
 
 private:
+
+    void initialize();
+
     Ui::MainWindow *ui;
     MapViewer * m_monitor;                  ///Wskaźnik na widżet obsługujący widok 3D.
     FileController m_fileController;        ///Obsługa plików dysków. Umożliwia wczytywanie danych.
     RobotController m_robotController;      ///Obsługa robota poprzez interfejs Bluetooth.
 
-    QTimer m_buttonHoldTimer;               ///Odliczanie czasu trzymania przycisku
+    QTimer * m_buttonHoldTimer;               ///Odliczanie czasu trzymania przycisku
     RobotOrientation m_diffOrientation;     ///Przekazywana do aktualizowania widoku zmienna
     MoveType m_moveType;                    ///Zliczany aktualnie ruch
+
 private slots:
                         /**
      * @brief Menu-Plik-Załaduj z pliku symulacyjnego
@@ -56,6 +60,7 @@ private slots:
     void on_rightButton_released();
     void on_leftButton_pressed();
     void on_leftButton_released();
+    void on_clearMoveButton_pressed();
 };
 
 #endif // MAINWINDOW_H

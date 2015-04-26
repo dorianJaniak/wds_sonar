@@ -33,6 +33,7 @@ public:
      * @return zawartość kolejnych pól odczytanych z pliku
      */
     QStringList getFromCSVFile(const QString & fileName);
+    QVector<QVector4D>* getFromSTLFile(const QString & fileName);
 };
 
 #endif // FILECONTROLLER_H

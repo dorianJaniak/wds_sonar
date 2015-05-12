@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Prosty symulator sonaru</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Pobaw sie</string>
+    <string name="action_wolowinka">tym tez</string>
+</resources>

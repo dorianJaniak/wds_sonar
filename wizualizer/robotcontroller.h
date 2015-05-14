@@ -6,15 +6,28 @@
 #include "bluetoothcontroller.h"
 #include "globalvariables.h"
 
+/**
+ * @brief Struktura RobotOrientation
+ *
+ * Struktura przechowuje informacje o pozycji robota
+ */
 struct RobotOrientation {
-    QVector4D position;         ///Położenie robota na mapie w stabilnych współrzędnych X,Y,Z,W
-    float angleY;               ///Obrót wokół własnej osi robota
+    QVector4D position;         ///<Położenie robota na mapie w stabilnych współrzędnych X,Y,Z,W
+    float angleY;               ///<Obrót wokół własnej osi robota
 };
 
+/**
+ * @brief Klasa obsługująca robota
+ *
+ * Klasa może obsługiwać robota. Zawiera informacje o jego położeniu,
+ * umie się z nim łączyć oraz umie obsługiwać komunikaty przez niego wysyłane.
+ */
 class RobotController : public MessageController, public BluetoothController
 {
-    RobotOrientation m_robotActualOrient;             ///Wysterowana realnie pozycja (na podstawie enkoderów i algorytmu)
-    RobotOrientation m_robotExpectedOrient;           ///Żądana pozycja dla robota (zatwierdzona w programie)
+                        ///Wysterowana realnie pozycja (na podstawie enkoderów i algorytmu)
+    RobotOrientation m_robotActualOrient;
+                         ///Żądana pozycja dla robota (zatwierdzona w programie)
+    RobotOrientation m_robotExpectedOrient;
 public:
     RobotController();
     ~RobotController();

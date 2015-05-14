@@ -9,22 +9,24 @@
 
 /**
  * @brief Klasa obiektu 3D związanego ze skanowaniem
+ *
  * Klasa przechowuje komplet informacji potrzebnych do wyrysowania
  * jednego wyniku skanowania terenu.
  */
 class EnvObj
 {
-    QVector<const GLfloat*> m_vertices;         ///wektor tablic wierzchołków - jedna tablica odpowiada jednej części siatki
-    QVector<unsigned int> m_verticesCount;      ///wektor ilości wierzchołków w poszczególnych tablicach
-    unsigned int m_allVertsCount;               ///ilość wszystkich wierzchołków
-    QVector4D m_centerPos;                      ///punkt środkowy obiektu we współrzędnych jednorodnych
-    QVector4D m_scale;                          ///przeskalowanie poszczególnych osi
-    QVector4D m_colorMaterial;                  ///kolor materiału we współrzędnych RGBA
-    float m_angleY;                             ///obrót obiektu wokół własnej osi Y
+    QVector<const GLfloat*> m_vertices;         ///<wektor tablic wierzchołków - jedna tablica odpowiada jednej części siatki
+    QVector<unsigned int> m_verticesCount;      ///<wektor ilości wierzchołków w poszczególnych tablicach
+    unsigned int m_allVertsCount;               ///<ilość wszystkich wierzchołków
+    QVector4D m_centerPos;                      ///<punkt środkowy obiektu we współrzędnych jednorodnych
+    QVector4D m_scale;                          ///<przeskalowanie poszczególnych osi
+    QVector4D m_colorMaterial;                  ///<kolor materiału we współrzędnych RGBA
+    float m_angleY;                             ///<obrót obiektu wokół własnej osi Y
 
 public:
                             /**
      * @brief Konstruktor
+     *
      * @param verts wskaźnik na pełny zestaw wierzchołków potrzebnych do wyrysowania wyniku jednego skanowania
      * @param color kolor materiału
      * @param center punkt środkowy obiektu we współrzędnych jednorodnych (pozycja robota)
@@ -64,7 +66,15 @@ public:
      */
     QVector4D getMaterialColor();
 
+                            /**
+     * @brief Ustawia środek obiektu
+     * @param position środek we współrzędnych jednorodnych
+     */
     void setCenter(QVector4D position);
+                            /**
+     * @brief Ustawia kąt obrotu wzdłuż osi Y
+     * @param angleY kąt w stopniach
+     */
     void setAngle(float angleY);
 };
 

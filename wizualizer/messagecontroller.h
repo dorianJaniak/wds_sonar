@@ -28,7 +28,7 @@ enum ErrorType {
 class MessageController : public QObject
 {
     Q_OBJECT
-    static QString m_wNames[];              ///Nagłówki wiadomości
+    static QString m_wNames[];              ///<Nagłówki wiadomości
 public:
     MessageController();
     ~MessageController();

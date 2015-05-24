@@ -4,4 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Pobaw sie</string>
     <string name="action_wolowinka">tym tez</string>
+    <string name="debug_text">Tutaj są informacje debugowania:</string>
+    <string name="sim_text">Zasymuluj</string>
 </resources>

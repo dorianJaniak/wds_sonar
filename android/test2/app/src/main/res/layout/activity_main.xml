@@ -29,18 +29,28 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="145dp"
+            android:layout_height="0dp"
             android:id="@+id/scrollView"
-            android:layout_gravity="center_horizontal" >
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.61">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tutaj pojawią się informacje debugowania"
+                android:text="@string/debug_text"
                 android:id="@+id/logger"
                 android:layout_gravity="center_horizontal"
-                android:layout_weight="0.25" />
+               />
         </ScrollView>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sim_text"
+            android:id="@+id/buttonSim"
+            android:layout_gravity="center_horizontal"
+            android:enabled="false"
+            android:onClick="buttonSimClicked"/>
 
     </LinearLayout>
 

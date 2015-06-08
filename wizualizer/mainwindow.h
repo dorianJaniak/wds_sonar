@@ -7,6 +7,8 @@
 #include "filecontroller.h"
 #include "robotcontroller.h"
 #include "globalvariables.h"
+#include "author.h"
+#include "comwindow.h"
 
 class OpenGLWindow;
 
@@ -32,6 +34,9 @@ private:
     void initialize();
 
     Ui::MainWindow *ui;
+    Author author;
+    ComWindow comWindow;
+
     MapViewer * m_monitor;                  ///<Wskaźnik na widżet obsługujący widok 3D.
     FileController m_fileController;        ///<Obsługa plików dysków. Umożliwia wczytywanie danych.
     RobotController m_robotController;      ///<Obsługa robota poprzez interfejs Bluetooth.
@@ -104,6 +109,8 @@ private slots:
      * Zeruje pozycję robota.
      */
     void on_clearMoveButton_pressed();
+    void on_actionO_autorze_triggered();
+    void on_actionKonfiguracja_triggered();
 };
 
 #endif // MAINWINDOW_H

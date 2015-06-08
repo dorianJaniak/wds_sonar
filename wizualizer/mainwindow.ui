@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>438</height>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,25 @@
     </property>
     <addaction name="actionLoadFromSimFile"/>
    </widget>
+   <widget class="QMenu" name="menuKomunikacja">
+    <property name="title">
+     <string>Komunikacja</string>
+    </property>
+    <addaction name="actionKonfiguracja"/>
+    <addaction name="actionWy_wietl_informacje"/>
+    <addaction name="separator"/>
+    <addaction name="actionPo_cz"/>
+    <addaction name="actionRoz_cz"/>
+   </widget>
+   <widget class="QMenu" name="menuO_Autorze">
+    <property name="title">
+     <string>Pomoc</string>
+    </property>
+    <addaction name="actionO_autorze"/>
+   </widget>
    <addaction name="menuPlik"/>
+   <addaction name="menuKomunikacja"/>
+   <addaction name="menuO_Autorze"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -80,8 +98,8 @@
   <widget class="QDockWidget" name="ControlWidget">
    <property name="minimumSize">
     <size>
-     <width>150</width>
-     <height>148</height>
+     <width>225</width>
+     <height>200</height>
     </size>
    </property>
    <property name="features">
@@ -193,6 +211,31 @@ p, li { white-space: pre-wrap; }
   <action name="actionLoadFromSimFile">
    <property name="text">
     <string>Załaduj z pliku symulacyjnego</string>
+   </property>
+  </action>
+  <action name="actionKonfiguracja">
+   <property name="text">
+    <string>Konfiguracja</string>
+   </property>
+  </action>
+  <action name="actionWy_wietl_informacje">
+   <property name="text">
+    <string>Wyświetl informacje</string>
+   </property>
+  </action>
+  <action name="actionO_autorze">
+   <property name="text">
+    <string>O autorze</string>
+   </property>
+  </action>
+  <action name="actionPo_cz">
+   <property name="text">
+    <string>Połącz</string>
+   </property>
+  </action>
+  <action name="actionRoz_cz">
+   <property name="text">
+    <string>Rozłącz</string>
    </property>
   </action>
  </widget>

@@ -21,7 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_fileController(parent),
-    m_buttonHoldTimer(nullptr)
+    m_buttonHoldTimer(nullptr),
+    comWindow(this),
+    author(this)
 {
     ui->setupUi(this);
     m_monitor = ui->mainView;
@@ -170,4 +172,14 @@ void MainWindow::on_clearMoveButton_pressed()
     m_diffOrientation.angleY = 0.0f;
     m_moveType = MoveType::stop;
     requestRobotMove();
+}
+
+void MainWindow::on_actionO_autorze_triggered()
+{
+    author.show();
+}
+
+void MainWindow::on_actionKonfiguracja_triggered()
+{
+    comWindow.show();
 }

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl serialport
 CONFIG   += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     messagecontroller.cpp \
     robotcontroller.cpp \
     bluetoothcontroller.cpp \
-    envobj.cpp
+    envobj.cpp \
+    author.cpp \
+    comwindow.cpp
 
 HEADERS  += mainwindow.h \
     mapviewer.h \
@@ -29,6 +31,10 @@ HEADERS  += mainwindow.h \
     messagecontroller.h \
     robotcontroller.h \
     bluetoothcontroller.h \
-    envobj.h
+    envobj.h \
+    author.h \
+    comwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    author.ui \
+    comwindow.ui

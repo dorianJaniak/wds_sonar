@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     filecontroller.cpp \
     messagecontroller.cpp \
     robotcontroller.cpp \
-    bluetoothcontroller.cpp \
     envobj.cpp \
     author.cpp \
     comwindow.cpp
@@ -30,7 +29,6 @@ HEADERS  += mainwindow.h \
     globalvariables.h \
     messagecontroller.h \
     robotcontroller.h \
-    bluetoothcontroller.h \
     envobj.h \
     author.h \
     comwindow.h

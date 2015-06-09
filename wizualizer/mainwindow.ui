@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>435</height>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,6 +47,22 @@
         <enum>Qt::RichText</enum>
        </property>
       </widget>
+      <widget class="QLabel" name="polaczenieLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;COM: Rozłączony&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -71,10 +87,10 @@
      <string>Komunikacja</string>
     </property>
     <addaction name="actionKonfiguracja"/>
-    <addaction name="actionWy_wietl_informacje"/>
+    <addaction name="actionShowSerialInfo"/>
     <addaction name="separator"/>
-    <addaction name="actionPo_cz"/>
-    <addaction name="actionRoz_cz"/>
+    <addaction name="actionConnectSerial"/>
+    <addaction name="actionDisconnectSerial"/>
    </widget>
    <widget class="QMenu" name="menuO_Autorze">
     <property name="title">
@@ -96,14 +112,20 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="ControlWidget">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="minimumSize">
     <size>
-     <width>225</width>
-     <height>200</height>
+     <width>200</width>
+     <height>400</height>
     </size>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>Kontrola</string>
@@ -115,8 +137,23 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QGroupBox" name="groupBox">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>150</height>
+        </size>
+       </property>
        <property name="title">
         <string>Przemieszczenie</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -145,11 +182,186 @@
          </layout>
         </item>
         <item>
+         <widget class="QPushButton" name="pb_moveRobot">
+          <property name="text">
+           <string>Jedź robocie, jedź!</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="clearMoveButton">
           <property name="text">
            <string>Powrót</string>
           </property>
          </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="gb_scanEnv">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>150</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Skanowanie otoczenia</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Liczba pomiarów:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Szybkość obrotu (°/s)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QSpinBox" name="sb_cMeasurments">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>30</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="sb_vSpeedScan">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_scanEnv">
+          <property name="text">
+           <string>Skanuj</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="gb_sKrok">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>150</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Kalibracja silnika krokowego</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="pb_moveLeftStepper">
+            <property name="text">
+             <string>&lt;-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_moveRightStepper">
+            <property name="text">
+             <string>-&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kąt obrotu (°)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Szybkość obrotu (°/s)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QSpinBox" name="sb_angle">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>360</number>
+              </property>
+              <property name="displayIntegerBase">
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="sb_vSpeedCallibration">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -214,11 +426,17 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionKonfiguracja">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Konfiguracja</string>
    </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
   </action>
-  <action name="actionWy_wietl_informacje">
+  <action name="actionShowSerialInfo">
    <property name="text">
     <string>Wyświetl informacje</string>
    </property>
@@ -228,12 +446,15 @@ p, li { white-space: pre-wrap; }
     <string>O autorze</string>
    </property>
   </action>
-  <action name="actionPo_cz">
+  <action name="actionConnectSerial">
    <property name="text">
     <string>Połącz</string>
    </property>
   </action>
-  <action name="actionRoz_cz">
+  <action name="actionDisconnectSerial">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Rozłącz</string>
    </property>

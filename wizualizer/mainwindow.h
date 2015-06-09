@@ -41,6 +41,7 @@ private:
     FileController m_fileController;        ///<Obsługa plików dysków. Umożliwia wczytywanie danych.
     RobotController m_robotController;      ///<Obsługa robota poprzez interfejs Bluetooth.
 
+    QTimer * m_blockWindowTimer;            ///<Odlicza czas blokowania głównego okna
     QTimer * m_buttonHoldTimer;               ///<Odliczanie czasu trzymania przycisku
     RobotOrientation m_diffOrientation;     ///<Przekazywana do aktualizowania widoku zmienna
     MoveType m_moveType;                    ///<Zliczany aktualnie ruch
@@ -51,6 +52,9 @@ private slots:
      * Reakcja na rządanie załadowania pliku symulacyjnego.
      */
     void on_actionLoadFromSimFile_triggered();
+
+    void unlockWindow();
+    void blockWindow(QString message, unsigned timeMS);
 
                         /**
      * @brief Funkcja dodająca logi o opisie caption oraz opcjonalnej liście błędów errors.
@@ -111,6 +115,14 @@ private slots:
     void on_clearMoveButton_pressed();
     void on_actionO_autorze_triggered();
     void on_actionKonfiguracja_triggered();
+    void on_actionConnectSerial_triggered();
+
+    void connectionConfHasChanged();
+    void on_actionDisconnectSerial_triggered();
+    void on_actionShowSerialInfo_triggered();
+
+    void on_pb_moveLeftStepper_clicked();
+    void on_pb_moveRightStepper_clicked();
 };
 
 #endif // MAINWINDOW_H

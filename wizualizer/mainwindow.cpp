@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QtSerialPort/QSerialPort>
 
 enum MsgPriorityType {
     simpleText = 0,
@@ -29,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent) :
     m_monitor = ui->mainView;
 
     connect(&m_fileController,SIGNAL(sendLog(QString,QVector<ErrorType>)),this,SLOT(showLog(QString,QVector<ErrorType>)));
+    connect(&m_robotController,SIGNAL(sendLog(QString,QVector<ErrorType>)),this,SLOT(showLog(QString,QVector<ErrorType>)));
+    connect(&comWindow,SIGNAL(updateSerial(const QSerialPortInfo&,QSerialPort::BaudRate,QSerialPort::DataBits,QSerialPort::FlowControl,QSerialPort::Parity,QSerialPort::StopBits)),
+            &m_robotController,SLOT(reconfigureSerial(QSerialPortInfo,QSerialPort::BaudRate,QSerialPort::DataBits,QSerialPort::FlowControl,QSerialPort::Parity,QSerialPort::StopBits)));
+    connect(&m_robotController,SIGNAL(blockWindow(QString,uint)),this,SLOT(blockWindow(QString,uint)));
+    connect(&m_robotController,SIGNAL(unlockWindow()),this,SLOT(unlockWindow()));
 
     initialize();
 }
@@ -66,6 +72,26 @@ void MainWindow::on_actionLoadFromSimFile_triggered()
     }
 }
 
+void MainWindow::unlockWindow()
+{
+    m_blockWindowTimer->stop();
+    ui->menuBar->setEnabled(true);
+    ui->ControlWidget->setEnabled(true);
+    delete m_blockWindowTimer;
+}
+
+void MainWindow::blockWindow(QString message, unsigned timeMS)
+{
+    ui->menuBar->setEnabled(false);
+    ui->ControlWidget->setEnabled(false);
+   // QMessageBox::information(this,tr("Blokada głównego okna"),message);
+    showLog(message);
+    m_blockWindowTimer = new QTimer(this);
+    connect(m_blockWindowTimer,SIGNAL(timeout()),this,SLOT(unlockWindow()));
+    if(timeMS > 0)
+        m_blockWindowTimer->start(timeMS);
+}
+
 void MainWindow::showLog(QString caption, QVector<ErrorType> errors)
 {
     caption += "<br>";
@@ -85,6 +111,22 @@ void MainWindow::showLog(QString caption, QVector<ErrorType> errors)
             break;
         case e02_lost_param:
             caption += QString(tr("- nie udało się odczytać parametru <br>"));
+            if(priority < MsgPriorityType::warningText) priority = MsgPriorityType::warningText;
+            break;
+        case e10_serial_not_opened:
+            caption += QString(tr("- nie udało się otworzyć portu COM <br>"));
+            if(priority < MsgPriorityType::errorText) priority = MsgPriorityType::errorText;
+            break;
+        case e11_serial_not_closed:
+            caption += QString(tr("- nie udało się zamknąć połączenia COM <br>"));
+            if(priority < MsgPriorityType::errorText) priority = MsgPriorityType::errorText;
+            break;
+        case e12_serial_not_reconfigured:
+            caption += QString(tr("- nie udało się zmienić konfiguracji portu <br>"));
+            if(priority < MsgPriorityType::warningText) priority = MsgPriorityType::warningText;
+            break;
+        case e13_serial_not_configured:
+            caption += QString(tr("- komunikacja szeregowa jest błędnie skonfigurowana <br>"));
             if(priority < MsgPriorityType::warningText) priority = MsgPriorityType::warningText;
             break;
         }
@@ -182,4 +224,47 @@ void MainWindow::on_actionO_autorze_triggered()
 void MainWindow::on_actionKonfiguracja_triggered()
 {
     comWindow.show();
+}
+
+void MainWindow::on_actionConnectSerial_triggered()
+{
+    if(m_robotController.openSerial())
+    {
+        ui->ControlWidget->setEnabled(true);
+        ui->actionKonfiguracja->setEnabled(false);
+        ui->actionConnectSerial->setEnabled(false);
+        ui->actionDisconnectSerial->setEnabled(true);
+        ui->polaczenieLabel->setText("<font color=\"green\"><b>COM: Podłączony</b></font>");
+    }
+}
+
+void MainWindow::connectionConfHasChanged()
+{
+
+}
+
+void MainWindow::on_actionDisconnectSerial_triggered()
+{
+    m_robotController.closeSerial();
+    ui->ControlWidget->setEnabled(false);
+    ui->actionKonfiguracja->setEnabled(true);
+    ui->actionConnectSerial->setEnabled(true);
+    ui->actionDisconnectSerial->setEnabled(false);
+    ui->polaczenieLabel->setText("<font color=\"red\"><b>COM: Rozłączony</b></font>");
+}
+
+void MainWindow::on_actionShowSerialInfo_triggered()
+{
+    QMessageBox::information(this,"Aktualne ustawienia COM", m_robotController.getInfoAboutSerial());
+
+}
+
+void MainWindow::on_pb_moveLeftStepper_clicked()
+{
+    m_robotController.moveStepperMotor(0,ui->sb_angle->value(),ui->sb_vSpeedCallibration->value());
+}
+
+void MainWindow::on_pb_moveRightStepper_clicked()
+{
+    m_robotController.moveStepperMotor(1,ui->sb_angle->value(),ui->sb_vSpeedCallibration->value());
 }

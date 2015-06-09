@@ -5,6 +5,8 @@
 #include "messagecontroller.h"
 #include "bluetoothcontroller.h"
 #include "globalvariables.h"
+#include <QtSerialPort/QSerialPort>
+#include <QObject>
 
 /**
  * @brief Struktura RobotOrientation
@@ -22,8 +24,10 @@ struct RobotOrientation {
  * Klasa może obsługiwać robota. Zawiera informacje o jego położeniu,
  * umie się z nim łączyć oraz umie obsługiwać komunikaty przez niego wysyłane.
  */
-class RobotController : public MessageController, public BluetoothController
+class RobotController : public MessageController
 {
+    Q_OBJECT
+    QSerialPort serial;
                         ///Wysterowana realnie pozycja (na podstawie enkoderów i algorytmu)
     RobotOrientation m_robotActualOrient;
                          ///Żądana pozycja dla robota (zatwierdzona w programie)
@@ -52,6 +56,21 @@ public:
      */
     void moveRobot(RobotOrientation displacement);
 
+    bool moveStepperMotor(bool directionRight, unsigned angle, unsigned vDegreeSpeed);
+
+    bool openSerial();
+    bool closeSerial();
+    QString getInfoAboutSerial();
+
+signals:
+    void unlockWindow();
+    void blockWindow(QString message, unsigned timeMS);
+
+public slots:
+    void reconfigureSerial(const QSerialPortInfo& port, QSerialPort::BaudRate br, QSerialPort::DataBits db, QSerialPort::FlowControl fc, QSerialPort::Parity p, QSerialPort::StopBits sb);
+
+private:
+    void initializeSerial();
 };
 
 #endif // ROBOTCONTROLLER_H

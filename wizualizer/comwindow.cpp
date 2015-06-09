@@ -2,6 +2,8 @@
 #include "ui_comwindow.h"
 
 #include <QtSerialPort/QSerialPort>
+#include <QAbstractButton>
+#include <QDebug>
 
 ComWindow::ComWindow(QWidget *parent) :
     QDialog(parent),
@@ -9,6 +11,7 @@ ComWindow::ComWindow(QWidget *parent) :
     ui(new Ui::ComWindow)
 {
     ui->setupUi(this);
+
     fill();
 }
 
@@ -19,14 +22,14 @@ ComWindow::~ComWindow()
 
 void ComWindow::fill()
 {
-    QList<QSerialPortInfo> serials = availablePorts();
+    serials = availablePorts();
     QList<qint32> bauds = standardBaudRates();
 
     for(unsigned i=0; i<serials.size(); i++)
-        ui->cb_port->addItem(serials[i].portName());
+        ui->cb_port->addItem(serials[i].portName(), QVariant(i));
 
     for(unsigned i=0; i<bauds.size();i++)
-        ui->cb_baud->addItem(QString::number(bauds.at(i)));
+        ui->cb_baud->addItem(QString::number(bauds.at(i)),QVariant(bauds.at(i)));
 
     //Poniższe instrukcje się nie skompilują jeśli nie będą istnieć
     //(sprawdzam w ten sposób zgodność z wersją biblioteki)
@@ -50,8 +53,23 @@ void ComWindow::fill()
 
 void ComWindow::on_pb_refresh_clicked()
 {
+    serials.clear();
     ui->cb_port->clear();
-    QList<QSerialPortInfo> serials = availablePorts();
+    serials = availablePorts();
     for(unsigned i=0; i<serials.size(); i++)
-        ui->cb_port->addItem(serials[i].portName());
+        ui->cb_port->addItem(serials[i].portName(), QVariant(i));
+}
+
+void ComWindow::on_buttonBox_clicked(QAbstractButton * button)
+{
+    if((QPushButton*)button == ui->buttonBox->button(QDialogButtonBox::Apply))
+    {
+        emit updateSerial(serials.at(ui->cb_port->currentData().toInt()),
+                          (QSerialPort::BaudRate)ui->cb_baud->currentData().toInt(),
+                          (QSerialPort::DataBits)ui->cb_bits->currentData().toInt(),
+                          (QSerialPort::FlowControl)ui->cb_flowcontrol->currentData().toInt(),
+                          (QSerialPort::Parity)ui->cb_parity->currentData().toInt(),
+                          (QSerialPort::StopBits)ui->cb_stopbit->currentData().toInt());
+    }
+    done(1);
 }

@@ -6,7 +6,13 @@
 
 QString MessageController::m_wNames[] = {
     QString("W0"),
-    QString("W1")
+    QString("W1"),
+    QString("W2"),
+    QString("W3"),
+    QString("W4"),
+    QString("W5"),
+    QString("W6"),
+    QString("W99")
 };
 
 
@@ -21,20 +27,47 @@ MessageController::~MessageController()
 
 }
 
-QVector<QVector<QVector4D>*> * MessageController::reinterpretW00(QStringList & allFields)
+MessageTypes MessageController::checkMessageType(const QString & msg)
 {
+    if(msg.size()<2)
+        return w_none;
+    for(unsigned i=0; i<9; i++)
+        if(msg.contains(m_wNames[i]))
+            return (MessageTypes)i;
+    return w_none;
+}
 
+QString MessageController::prepareStringFromList(QStringList list)
+{
+    QString result;
+    if(list.size()>0)
+    {
+        result = list.at(0);
+        for(int i=1; i<list.size(); i++)
+            result += (QString(";")+list.at(i));
+    }
+    return result;
+}
+
+QStringList MessageController::prepareListFromString(QString msg)
+{
+    return msg.split(';');
+}
+
+bool MessageController::reinterpretW00(QStringList allFields)
+{
+    QString caption = tr("Problemy z odczytem wiadomości W00 ");
     QVector<ErrorType> errors;
-    if(allFields.size()<=1)                     ///Gdy wiadomosc nie posiada naglowka i ilosci argumentow
+    if(allFields.size()!=2)
     {
         errors.push_back(ErrorType::e00_problem_header);
-        emit sendLog(tr("Problemy z odczytem wiadomości W00 "),errors);
+        emit sendLog(caption,errors);
         return nullptr;
     }
-    if(allFields.at(0)!=m_wNames[MessageTypes::w00_map_data])   ///Gdy wiadomosc nie posiada naglowka
+    if(checkMessageType(allFields.at(0)) != w_ok)
     {
         errors.push_back(ErrorType::e00_problem_header);
-        emit sendLog(tr("Problemy z odczytem wiadomości W00 "),errors);
+        emit sendLog(caption,errors);
         return nullptr;
     }
     bool ok;
@@ -42,7 +75,83 @@ QVector<QVector<QVector4D>*> * MessageController::reinterpretW00(QStringList & a
     if(!ok)
     {
         errors.push_back(ErrorType::e00_problem_header);
-        emit sendLog(tr("Problemy z odczytem wiadomości W00 "),errors);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    if(countOfParams!=0)
+    {
+        errors.push_back(ErrorType::e01_problem_params);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    return true;
+}
+
+bool MessageController::reinterpretW01(QStringList & allFields)
+{
+    QString caption = tr("Problemy z odczytem wiadomości W01 ");
+    QVector<ErrorType> errors;
+    if(allFields.size()!=2)
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    if(checkMessageType(allFields.at(0)) != w_start)
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    bool ok;
+    unsigned int countOfParams = allFields.at(1).toInt(&ok);
+    if(!ok)
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    if(countOfParams!=0)
+    {
+        errors.push_back(ErrorType::e01_problem_params);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    return true;
+}
+
+QStringList MessageController::prepareW02(unsigned cMeasurements, unsigned vDegreeSpeed)
+{
+    QStringList result;
+    result.append(m_wNames[w_scan]);
+    result.append(QString::number(2));
+    result.append(QString::number(cMeasurements));
+    result.append(QString::number(vDegreeSpeed));
+    return result;
+}
+
+QVector<QVector<QVector4D>*> * MessageController::reinterpretW03(QStringList & allFields)
+{
+    QString caption = tr("Problemy z odczytem wiadomości W03 ");
+    QVector<ErrorType> errors;
+    if(allFields.size()<=1)                     ///Gdy wiadomosc nie posiada naglowka i ilosci argumentow
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    if(checkMessageType(allFields.at(0)) != w_map_data)   ///Gdy wiadomosc nie posiada naglowka
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return nullptr;
+    }
+    bool ok;
+    unsigned int countOfParams = allFields.at(1).toInt(&ok);
+    if(!ok)
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
         return nullptr;
     }
     if(countOfParams + 2 != allFields.size())   ///Gdy odczytana ilosc argumentow nie zgadza sie z dlugoscia otrzymanej wiadomosci
@@ -66,8 +175,8 @@ QVector<QVector<QVector4D>*> * MessageController::reinterpretW00(QStringList & a
         {
             if( ok_part && ok )
             {
-                float x = far*cos((180.0f-angle)*3.14f/180.0f)/100.0f;
-                float z = -far*sin((180.0f-angle)*3.14f/180.0f)/100.0f;
+                float x = far*cos((angle)*3.14f/180.0f)/100.0f;
+                float z = -far*sin((angle)*3.14f/180.0f)/100.0f;
                 data->back()->push_back(QVector4D(x,0.0f,-z,1.0f));
                 lastTimeAdded = false;
             }
@@ -79,7 +188,17 @@ QVector<QVector<QVector4D>*> * MessageController::reinterpretW00(QStringList & a
         }
     }
     if(errors.size() > 0)
-        emit sendLog(tr("Problemy z odczytem wiadomości W00 "),errors);
+        emit sendLog(caption,errors);
     return data;
 }
 
+QStringList MessageController::prepareW04(bool directionRight, unsigned angle, unsigned vDegreeSpeed)
+{
+    QStringList result;
+    result.append(m_wNames[w_calibrate]);
+    result.append(QString::number(3));
+    result.append(QString::number((unsigned)directionRight));
+    result.append(QString::number(angle));
+    result.append(QString::number(vDegreeSpeed));
+    return result;
+}

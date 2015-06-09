@@ -4,6 +4,9 @@
 #include <QVector4D>
 #include <QColor>
 
+const unsigned g_maxWriteLengthData = 150;  ///<Maksymalna długość wiadomości wysyłanej w komunikacji szeregowej
+const unsigned g_maxReadLengthData = 500;   ///<Maksymalna długość wiadomości odbieranej w komunikacji szeregowej
+
 const float g_maxFar = 200.0f;  ///<Pomiar ponad g_maxFar centymetrów będzie uznany za nieprawidłowy
 const float g_yMapStep = 0.1f; ///<Każda kolejna podmapa zostanie podniesiona o podaną wartość
 const float g_colorStep = 0.1f; ///<Zmiana koloru między kolejnymi mapami

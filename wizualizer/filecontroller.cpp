@@ -17,7 +17,7 @@ FileController::~FileController()
 QVector<QVector<QVector4D>*> *FileController::loadSensorDataFromFile(const QString & fileName)
 {
     QStringList allFields = getFromCSVFile(fileName);
-    return reinterpretW00(allFields);
+    return reinterpretW03(allFields);
 }
 
 QStringList FileController::getFromCSVFile(const QString & fileName)

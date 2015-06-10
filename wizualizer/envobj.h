@@ -31,7 +31,7 @@ public:
      * @param color kolor materiału
      * @param center punkt środkowy obiektu we współrzędnych jednorodnych (pozycja robota)
      */
-    EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color = QVector4D(), QVector4D center = QVector4D(0.0f,0.0f,0.0f,1.0f), QVector4D scale = QVector4D(1.0f,1.0f,1.0f,1.0f));
+    EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color = QVector4D(), QVector4D center = QVector4D(0.0f,0.0f,0.0f,1.0f), float angleY=0.0f, QVector4D scale = QVector4D(1.0f,1.0f,1.0f,1.0f));
     ~EnvObj();
                             /**
      * @brief Zwraca ilość podsiatek, z których składa się obiekt

@@ -67,7 +67,8 @@ void MainWindow::on_actionLoadFromSimFile_triggered()
         QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się załadować pliku symulacyjnego"));
     else
     {
-        m_monitor->addEnvMap(verts,m_robotController.getExpectedOrientation().position);
+        RobotOrientation orientation = m_robotController.getExpectedOrientation();
+        m_monitor->addEnvMap(verts,orientation.position, orientation.angleY);
         delete verts;
     }
 }
@@ -185,9 +186,10 @@ void MainWindow::requestRobotMove()
 {
     double forwardStep = 0.025;
     double angleStep = 3.0;
+    RobotOrientation orientation = m_robotController.getExpectedOrientation();
     if(m_diffOrientation.angleY>180.0) m_diffOrientation.angleY -= 360.0;
     else if(m_diffOrientation.angleY<-180.0) m_diffOrientation.angleY += 360.0;
-    double angleRad = (180.0-m_diffOrientation.angleY)*3.14/180.0;
+    double angleRad = (180.0-m_diffOrientation.angleY-orientation.angleY)*3.14/180.0;
     switch(m_moveType)
     {
     case MoveType::moveForward: m_diffOrientation.position += QVector4D(-sin(angleRad)*forwardStep,0.0f,cos(angleRad)*forwardStep,0.0f); break;
@@ -204,7 +206,7 @@ void MainWindow::requestRobotMove()
                                 tr(" kątY:") + QString::number(m_diffOrientation.angleY,'f',1));
     ui->sterowanieLabel->setText(caption);
 
-    RobotOrientation orientation = m_robotController.getActualOrientation();
+
     m_monitor->setRequestRobotOrientation(orientation.position+m_diffOrientation.position, orientation.angleY+m_diffOrientation.angleY);
 }
 
@@ -230,7 +232,9 @@ void MainWindow::on_actionConnectSerial_triggered()
 {
     if(m_robotController.openSerial())
     {
-        ui->ControlWidget->setEnabled(true);
+        //ui->ControlWidget->setEnabled(true);
+        ui->gb_scanEnv->setEnabled(true);
+        ui->gb_sKrok->setEnabled(true);
         ui->actionKonfiguracja->setEnabled(false);
         ui->actionConnectSerial->setEnabled(false);
         ui->actionDisconnectSerial->setEnabled(true);
@@ -241,7 +245,9 @@ void MainWindow::on_actionConnectSerial_triggered()
 void MainWindow::on_actionDisconnectSerial_triggered()
 {
     m_robotController.closeSerial();
-    ui->ControlWidget->setEnabled(false);
+  //  ui->ControlWidget->setEnabled(false);
+    ui->gb_scanEnv->setEnabled(false);
+    ui->gb_sKrok->setEnabled(false);
     ui->actionKonfiguracja->setEnabled(true);
     ui->actionConnectSerial->setEnabled(true);
     ui->actionDisconnectSerial->setEnabled(false);
@@ -271,7 +277,15 @@ void MainWindow::on_pb_scanEnv_clicked()
         QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się zinterpretować wiadomości i narysować mapy"));
     else
     {
-        m_monitor->addEnvMap(verts,m_robotController.getExpectedOrientation().position);
+        RobotOrientation orientation = m_robotController.getExpectedOrientation();
+        m_monitor->addEnvMap(verts,orientation.position,orientation.angleY);
         delete verts;
     }
+}
+
+void MainWindow::on_pb_moveRobot_clicked()
+{
+    m_robotController.moveRobot(m_diffOrientation);
+    m_diffOrientation.angleY = 0.0f;
+    m_diffOrientation.position = QVector4D(0.0f,0.0f,0.0f,0.0f);
 }

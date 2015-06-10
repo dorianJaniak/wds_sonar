@@ -113,7 +113,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="ControlWidget">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="minimumSize">
     <size>
@@ -136,7 +136,7 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="gb_movement">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -200,6 +200,9 @@
      </item>
      <item>
       <widget class="QGroupBox" name="gb_scanEnv">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -277,6 +280,9 @@
      </item>
      <item>
       <widget class="QGroupBox" name="gb_sKrok">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>

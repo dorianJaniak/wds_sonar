@@ -45,7 +45,7 @@ public:
      * @param center punkt środkowy obiektu
      * @param allowToModifyY pozwolenie na "podnoszenie" kolejnych skanów względem osi Y
      */
-    void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center, bool allowToModifyY = true);
+    void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center, float angleY);
                         /**
      * @brief Dodaj robota, reprezentującego żądaną pozycję
      *
@@ -134,6 +134,8 @@ private:
     GLuint _centerMoveMatID;            ///<Uchwyt zmiennej reprezentującej macierz przekształcenia środka widoku 3D w shaderze ColorShader.
     GLfloat _cameraAngleX;              ///<Kąt wychylenia kamery względem osi X ( w stopniach ).
     GLfloat _cameraAngleY;              ///<Kąt wychylenia kamery względem osi Y ( w stopniach ).
+    GLfloat _cameraX;                   ///<Przesunięcie kamery względem osi X
+    GLfloat _cameraZ;                   ///<Przesunięcie kamery względem osi Z
     GLfloat _cameraFar;                 ///<Odległość kamery od środka sceny 3D.
     QPoint _mouseLastPos;               ///<Zapamiętana ostatnia pozycja myszy
     QVector4D m_backgroundColor;        ///<Kolor tła we współrzędnych jednorodnych

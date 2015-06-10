@@ -1,9 +1,10 @@
 #include "envobj.h"
 
-EnvObj::EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D center, QVector4D scale) :
+EnvObj::EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color, QVector4D center, float angleY, QVector4D scale) :
     m_centerPos(center),
     m_colorMaterial(color),
-    m_scale(scale)
+    m_scale(scale),
+    m_angleY(angleY)
 {
     m_allVertsCount = 0;
     for(int i=0; i<verts->size(); i++)

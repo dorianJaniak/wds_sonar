@@ -123,6 +123,7 @@ private slots:
     void on_pb_moveLeftStepper_clicked();
     void on_pb_moveRightStepper_clicked();
     void on_pb_scanEnv_clicked();
+    void on_pb_moveRobot_clicked();
 };
 
 #endif // MAINWINDOW_H

@@ -11,6 +11,7 @@ RobotController::RobotController() :
     empty.position = QVector4D(0,0,0,1);
     empty.angleY = 0;
     m_robotActualOrient = empty;
+    m_robotExpectedOrient = empty;
 }
 
 RobotController::~RobotController()
@@ -197,11 +198,12 @@ void RobotController::clearSerialBuffers()
 
 QString RobotController::readMessageFromSerial(unsigned timeMS)
 {
+    unsigned divisor = 10;
     QString msg = serial.readAll();
     bool msgFull = false;
-    for(int i=0; i<g_maxReadingTestCount && !msgFull; i++)
+    for(int i=0; i<g_maxReadingTestCount*divisor && !msgFull; i++)
     {
-        while(serial.waitForReadyRead(timeMS))
+        while(serial.waitForReadyRead(timeMS/divisor))
         {
             msg.append(serial.readAll());
             if(msg.contains("\x0A") && msg.size()>= g_minLengthOfMessage)

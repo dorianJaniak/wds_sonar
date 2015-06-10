@@ -23,6 +23,8 @@ MapViewer::MapViewer(QWidget * parent) :
 {
     _cameraAngleX = 0.0f;
     _cameraAngleY = 0.0f;
+    _cameraX = 0.0f;
+    _cameraZ = 0.0f;
     _cameraFar = -2.0f;
     m_robotMesh = nullptr;
     m_requestRobot = nullptr;
@@ -64,7 +66,7 @@ void MapViewer::initializeGL()
     _centerMoveMatID = _program->uniformLocation("Mmove");
     _materialColorID = _program->uniformLocation("materialColor");
 
-    addTestTriangle();
+    //addTestTriangle();
     addGrid();
     addRequestRobot();
     _projMat.setToIdentity();
@@ -82,13 +84,17 @@ void MapViewer::paintGL()
    // _centerMoveMat.rotate(kat, 0.0f, 1.0f, 0.0f);
     _centerMoveMat.rotate(_cameraAngleX, 1.0f,0.0f,0.0f);
     _centerMoveMat.rotate(_cameraAngleY, 0.0f,1.0f,0.0f);
+    _centerMoveMat.translate(_cameraX, 0.0f, _cameraZ);
 
-    _vao.bind();
+
+
+
+  //  _vao.bind();
     _program->bind();
     _program->setUniformValue(_projMatID, _projMat);
     _program->setUniformValue(_centerMoveMatID, _centerMoveMat);
-    _program->setUniformValue(_materialColorID, QVector4D(0.0f,1.0f,0.0f,1.0f));
-    f->glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+  //  _program->setUniformValue(_materialColorID, QVector4D(0.0f,1.0f,0.0f,1.0f));
+  //  f->glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 
     _gridVAO.bind();
     _program->bind();
@@ -146,16 +152,43 @@ void MapViewer::mouseMoveEvent(QMouseEvent * event)
     int dx = event->x() - _mouseLastPos.x();
     int dy = event->y() - _mouseLastPos.y();
 
-    if(dy < -2) _cameraAngleX -= 3.5f;
-    else if(dy > 2) _cameraAngleX += 3.5f;
-    if(dx < -2) _cameraAngleY -= 3.5f;
-    else if(dx > 2) _cameraAngleY += 3.5f;
+    if(event->buttons() == Qt::LeftButton)                  //Gdy naciśnięty lewy przycisk to obrót kamery
+    {
+        if(dy < -2) _cameraAngleX -= 3.5f;
+        else if(dy > 2) _cameraAngleX += 3.5f;
+        if(dx < -2) _cameraAngleY -= 3.5f;
+        else if(dx > 2) _cameraAngleY += 3.5f;
 
-    if(_cameraAngleX > 360.0f) _cameraAngleX -= 360.0f;
-    else if(_cameraAngleX < -360.0f) _cameraAngleX += 360.0f;
-    if(_cameraAngleY > 360.0f) _cameraAngleY -= 360.0f;
-    else if(_cameraAngleY < -360.0f) _cameraAngleY += 360.0f;
-
+        if(_cameraAngleX > 360.0f) _cameraAngleX -= 360.0f;
+        else if(_cameraAngleX < -360.0f) _cameraAngleX += 360.0f;
+        if(_cameraAngleY > 360.0f) _cameraAngleY -= 360.0f;
+        else if(_cameraAngleY < -360.0f) _cameraAngleY += 360.0f;
+    }
+    else if(event->buttons() == Qt::RightButton)            //Gdy naciśnięty prawy przycisk to przesunięcie kamery
+    {
+        float angleRad = (3.14f*_cameraAngleY)/180.0f;
+        if(dy < -2)
+        {
+            _cameraX += 0.1f*sin(angleRad);
+            _cameraZ -= 0.1f*cos(angleRad);
+        }
+        else if(dy > 2)
+        {
+            _cameraX -= 0.1f*sin(angleRad);
+            _cameraZ += 0.1f*cos(angleRad);
+        }
+        if(dx < -2)
+        {
+            _cameraX -= 0.1f*cos(angleRad);
+            _cameraZ -= 0.1f*sin(angleRad);
+        }
+        else if(dx > 2)
+        {
+            _cameraX += 0.1f*cos(angleRad);
+            _cameraZ += 0.1f*sin(angleRad);
+        }
+    }
+    qDebug() << _cameraX << _cameraZ;
     _mouseLastPos = event->pos();
     update();
 }
@@ -224,14 +257,14 @@ void MapViewer::addGrid(float space, int rows, int cols)
         _program->setAttributeBuffer(0,GL_FLOAT,0,4);
 }
 
-void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center, bool allowToModifyY)
+void MapViewer::addEnvMap(QVector<QVector<QVector4D>*> * verts, QVector4D center, float angleY)
 {
     static int mapNo = 0;
     float upGo = mapNo*g_yMapStep;
     while(upGo>1.0f) upGo -= 1.0f;
 
     makeCurrent();
-    m_maps.push_back(new EnvMap(verts,countColor(mapNo),center+QVector4D(0.0f,upGo,0.0f,0.0f)));
+    m_maps.push_back(new EnvMap(verts,countColor(mapNo),center+QVector4D(0.0f,upGo,0.0f,0.0f),angleY));
 
     m_mapsVAOs.push_back(QVector<QOpenGLVertexArrayObject*> ());
     m_mapsVBOs.push_back(QVector<QOpenGLBuffer*> ());
@@ -271,7 +304,7 @@ void MapViewer::addRequestRobot()
 
     QVector<QVector<QVector4D>*>* verts = new QVector<QVector<QVector4D>*>;
     verts->push_back(m_robotMesh);
-    m_requestRobot = new EnvObj(verts,g_requestRobotColor,QVector4D(0,0,0,1),g_requestRobotScale);
+    m_requestRobot = new EnvObj(verts,g_requestRobotColor,QVector4D(0,0,0,1),0.0f,g_requestRobotScale);
 
     makeCurrent();
     m_requestRobotVAO = new QOpenGLVertexArrayObject(m_parent);
@@ -286,8 +319,6 @@ void MapViewer::addRequestRobot()
     _program->setAttributeBuffer(0,GL_FLOAT,0,4);
 
     doneCurrent();
-
-
 }
 
 void MapViewer::setRobotMesh(QVector<QVector4D>* verts)

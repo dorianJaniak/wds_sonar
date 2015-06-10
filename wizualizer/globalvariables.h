@@ -10,8 +10,8 @@ const unsigned g_maxReadingTestCount = 5;   ///<Maksymalna ilość ponowienia pr
 const unsigned g_minLengthOfMessage = 4;    ///<Minimalna długość wiadomości wysyłanej i odbieranej w komunikacji szeregowej
 const unsigned g_scanAngle = 180;           ///<Ustawiony kąt skanowania w programie robota
 
-const float g_maxFar = 200.0f;  ///<Pomiar ponad g_maxFar centymetrów będzie uznany za nieprawidłowy
-const float g_yMapStep = 0.1f; ///<Każda kolejna podmapa zostanie podniesiona o podaną wartość
+const float g_maxFar = 300.0f;  ///<Pomiar ponad g_maxFar centymetrów będzie uznany za nieprawidłowy
+const float g_yMapStep = 0.033f; ///<Każda kolejna podmapa zostanie podniesiona o podaną wartość
 const float g_colorStep = 0.1f; ///<Zmiana koloru między kolejnymi mapami
 const float g_gridLineWidth = 0.3f; ///<Szerokość linii krawędzi
 const float g_mapLineWidth = 1.0f; ///<Szerokość linii mapy

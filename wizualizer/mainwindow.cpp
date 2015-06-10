@@ -238,11 +238,6 @@ void MainWindow::on_actionConnectSerial_triggered()
     }
 }
 
-void MainWindow::connectionConfHasChanged()
-{
-
-}
-
 void MainWindow::on_actionDisconnectSerial_triggered()
 {
     m_robotController.closeSerial();
@@ -267,4 +262,16 @@ void MainWindow::on_pb_moveLeftStepper_clicked()
 void MainWindow::on_pb_moveRightStepper_clicked()
 {
     m_robotController.moveStepperMotor(1,ui->sb_angle->value(),ui->sb_vSpeedCallibration->value());
+}
+
+void MainWindow::on_pb_scanEnv_clicked()
+{
+    QVector<QVector<QVector4D>*> * verts = m_robotController.scanTerritory(ui->sb_cMeasurments->value(),ui->sb_vSpeedScan->value());
+    if(verts==nullptr)
+        QMessageBox::critical(this,tr("Błąd odczytu mapy"),tr("Nie udało się zinterpretować wiadomości i narysować mapy"));
+    else
+    {
+        m_monitor->addEnvMap(verts,m_robotController.getExpectedOrientation().position);
+        delete verts;
+    }
 }

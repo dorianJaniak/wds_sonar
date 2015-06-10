@@ -57,6 +57,7 @@ public:
     void moveRobot(RobotOrientation displacement);
 
     bool moveStepperMotor(bool directionRight, unsigned angle, unsigned vDegreeSpeed);
+    QVector<QVector<QVector4D>*> * scanTerritory(unsigned cMeasurements ,unsigned vDegreeSpeed);
 
     bool openSerial();
     bool closeSerial();

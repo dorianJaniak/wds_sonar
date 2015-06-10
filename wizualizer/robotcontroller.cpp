@@ -11,7 +11,6 @@ RobotController::RobotController() :
     empty.position = QVector4D(0,0,0,1);
     empty.angleY = 0;
     m_robotActualOrient = empty;
-    m_serialReadyRead = false;
 }
 
 RobotController::~RobotController()
@@ -55,6 +54,26 @@ bool RobotController::moveStepperMotor(bool directionRight, unsigned angle, unsi
         return true;
     }
     return true;
+}
+
+QVector<QVector<QVector4D>*> * RobotController::scanTerritory(unsigned cMeasurements ,unsigned vDegreeSpeed)
+{
+    clearSerialBuffers();
+
+    QString msgResponse;
+    QString msgSend;
+    unsigned timeMS = (2*g_scanAngle*1000)/vDegreeSpeed;
+
+    msgSend = prepareStringFromList(prepareW02(cMeasurements,vDegreeSpeed));
+    serial.write(msgSend.toLocal8Bit());
+    emit blockWindow(tr("Poczekaj %1 s, powinieneś zobaczyć obracający się czujnik zamieszczony na silniku krokowym").arg(QString::number(timeMS/1000)),timeMS);
+    QCoreApplication::processEvents(QEventLoop::AllEvents);
+
+    msgResponse = readMessageFromSerial(timeMS);
+
+    emit sendLog(tr("WIADOMOŚĆ: ") + msgResponse);
+    QStringList allFields = prepareListFromString(msgResponse);
+    return reinterpretW03(allFields);
 }
 
 bool RobotController::openSerial()
@@ -185,9 +204,9 @@ QString RobotController::readMessageFromSerial(unsigned timeMS)
         while(serial.waitForReadyRead(timeMS))
         {
             msg.append(serial.readAll());
-            if(msg.contains("\n") && msg.size()>= g_minLengthOfMessage)
+            if(msg.contains("\x0A") && msg.size()>= g_minLengthOfMessage)
                 msgFull = true;
         }
     }
-    return msgResponse;
+    return msg;
 }

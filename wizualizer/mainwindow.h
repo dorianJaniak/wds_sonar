@@ -117,12 +117,12 @@ private slots:
     void on_actionKonfiguracja_triggered();
     void on_actionConnectSerial_triggered();
 
-    void connectionConfHasChanged();
     void on_actionDisconnectSerial_triggered();
     void on_actionShowSerialInfo_triggered();
 
     void on_pb_moveLeftStepper_clicked();
     void on_pb_moveRightStepper_clicked();
+    void on_pb_scanEnv_clicked();
 };
 
 #endif // MAINWINDOW_H

@@ -188,7 +188,6 @@ void MapViewer::mouseMoveEvent(QMouseEvent * event)
             _cameraZ += 0.1f*sin(angleRad);
         }
     }
-    qDebug() << _cameraX << _cameraZ;
     _mouseLastPos = event->pos();
     update();
 }

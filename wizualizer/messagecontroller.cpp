@@ -202,3 +202,68 @@ QStringList MessageController::prepareW04(bool directionRight, unsigned angle, u
     result.append(QString::number(vDegreeSpeed));
     return result;
 }
+
+QStringList MessageController::prepareW05(unsigned vCMperSspeed, unsigned relDistCM, int relRotBM, int relRotAM)
+{
+    QStringList result;
+    result.append(m_wNames[w_move]);
+    result.append(QString::number(4));
+    result.append(QString::number(vCMperSspeed));
+    result.append(QString::number(relDistCM));
+    result.append(QString::number(relRotBM));
+    result.append(QString::number(relRotAM));
+    return result;
+}
+
+QVector<int> MessageController::reinterpretW06(QStringList allFields)
+{
+    QString caption = tr("Problemy z odczytem wiadomości W06 ");
+    QVector<ErrorType> errors;
+    if(allFields.size()<=1)                     ///Gdy wiadomosc nie posiada naglowka i ilosci argumentow
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return QVector<int>();
+    }
+    if(checkMessageType(allFields.at(0)) != w_resultMove)   ///Gdy wiadomosc nie posiada naglowka
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return QVector<int>();
+    }
+    bool ok;
+    unsigned int countOfParams = allFields.at(1).toInt(&ok);
+    if(!ok)
+    {
+        errors.push_back(ErrorType::e00_problem_header);
+        emit sendLog(caption,errors);
+        return QVector<int>();
+    }
+    if(countOfParams + 2 != allFields.size())   ///Gdy odczytana ilosc argumentow nie zgadza sie z dlugoscia otrzymanej wiadomosci
+        errors.push_back(ErrorType::e01_problem_params);
+
+    QVector<int> result;
+    bool ok_part = true;
+    if(allFields.size() > 4)
+    {
+        result.push_back(allFields.at(2).toInt(&ok));
+        ok_part &= ok;
+        result.push_back(allFields.at(3).toInt(&ok));
+        ok_part &= ok;
+        result.push_back(allFields.at(4).toInt(&ok));
+        ok_part &= ok;
+    }
+    else
+    {
+        errors.push_back(ErrorType::e01_problem_params);
+    }
+    if(!ok_part)
+        errors.push_back(ErrorType::e02_lost_param);
+
+    if(errors.size() > 0)
+    {
+        emit sendLog(caption,errors);
+        return QVector<int>();
+    }
+    return result;
+}

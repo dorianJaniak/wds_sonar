@@ -54,7 +54,7 @@ public:
      * do zadanej pozycji. Przy okazji dane zostaną zapisane w zmiennej m_robotExpectedOrient.
      * @param displacement Przemieszczenie robota we współrzędnych mapy.
      */
-    void moveRobot(RobotOrientation displacement);
+    bool moveRobot(RobotOrientation displacement, unsigned vCMperSspeed, bool toSerial = false);
 
     bool moveStepperMotor(bool directionRight, unsigned angle, unsigned vDegreeSpeed);
     QVector<QVector<QVector4D>*> * scanTerritory(unsigned cMeasurements ,unsigned vDegreeSpeed);

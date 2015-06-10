@@ -184,7 +184,7 @@ void MainWindow::on_leftButton_released()
 
 void MainWindow::requestRobotMove()
 {
-    double forwardStep = 0.025;
+    double forwardStep = ((float)ui->sb_speedRobot->value())/1000.0f;
     double angleStep = 3.0;
     RobotOrientation orientation = m_robotController.getExpectedOrientation();
     if(m_diffOrientation.angleY>180.0) m_diffOrientation.angleY -= 360.0;
@@ -285,7 +285,7 @@ void MainWindow::on_pb_scanEnv_clicked()
 
 void MainWindow::on_pb_moveRobot_clicked()
 {
-    m_robotController.moveRobot(m_diffOrientation);
+    m_robotController.moveRobot(m_diffOrientation,ui->sb_speedRobot->value(),!ui->actionConnectSerial->isEnabled());
     m_diffOrientation.angleY = 0.0f;
     m_diffOrientation.position = QVector4D(0.0f,0.0f,0.0f,0.0f);
 }

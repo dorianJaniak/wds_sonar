@@ -63,6 +63,10 @@ public:
 
     QStringList prepareW04(bool directionRight, unsigned angle, unsigned vDegreeSpeed);
 
+    QStringList prepareW05(unsigned vCMperSspeed, unsigned relDistCM, int relRotBM, int relRotAM);
+
+    QVector<int> reinterpretW06(QStringList allFields);
+
 signals:
                     /**
      * @brief Sygnał raportujący wektor błędów lub komunikat.

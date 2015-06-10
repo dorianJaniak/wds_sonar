@@ -29,11 +29,67 @@ RobotOrientation RobotController::getExpectedOrientation()
     return m_robotExpectedOrient;
 }
 
-void RobotController::moveRobot(RobotOrientation displacement)
+bool RobotController::moveRobot(RobotOrientation displacement, unsigned vCMperSspeed, bool toSerial)
 {
-    m_robotExpectedOrient.angleY += displacement.angleY;
-    for(int i=0; i<3; i++)
-        m_robotExpectedOrient.position[i] += displacement.position[i];
+    bool status = false;
+    clearSerialBuffers();
+    double distanceCM, rotBeforeMove = 0, rotAfterMove = 0;
+
+    distanceCM = 100* sqrt( displacement.position[0]*displacement.position[0] + displacement.position[2]*displacement.position[2] );
+    unsigned timeMS = (1000* distanceCM)/ vCMperSspeed;
+
+    if(timeMS == 0)
+        timeMS = 1;
+    if(distanceCM >= 1)
+    {
+        rotBeforeMove = 180.0*acos((-100*displacement.position[2])/distanceCM)/g_pi;
+        if(displacement.position[0] > 0)
+            rotBeforeMove *= -1;
+        rotBeforeMove -= m_robotExpectedOrient.angleY;
+    }
+    rotAfterMove = displacement.angleY - rotBeforeMove;
+    if(rotAfterMove > 180.0f)
+        rotAfterMove -= 360.0f;
+    else if(rotAfterMove < -180.0f)
+        rotAfterMove += 360.0f;
+    if(rotBeforeMove > 180.0f)
+        rotBeforeMove -= 360.0f;
+    else if(rotBeforeMove < -180.0f)
+        rotBeforeMove += 360.0f;
+
+    QString msgSend = prepareStringFromList( prepareW05( vCMperSspeed, (unsigned)distanceCM, (int)rotBeforeMove, (int)rotAfterMove));
+    if(toSerial)
+    {
+        serial.write(msgSend.toLocal8Bit());
+        emit blockWindow(tr("Poczekaj %1 s, powinieneś zobaczyć poruszającego się robota.").arg(QString::number(timeMS/1000)),timeMS);
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+
+        QString msgResponse = readMessageFromSerial(timeMS);
+        emit sendLog(tr("WIADOMOŚĆ: ") + msgResponse);
+        QVector<int> result = reinterpretW06(prepareListFromString(msgResponse));
+        if(result.size()==3)
+        {
+            status = true;
+            emit sendLog(tr("Operacja przemieszczenia robota zakończona powodzeniem."));
+            float angle_move = (float)result.at(1) + m_robotExpectedOrient.angleY;
+            float x_move = -1.0f*(float)result.at(0)*sin((angle_move * g_pi )/ 180.0f)/100;
+            float z_move = -1.0f*(float)result.at(0)*cos((angle_move * g_pi)/ 180.0f)/100;
+            m_robotExpectedOrient.angleY += (result.at(1) + result.at(2));
+            while(m_robotExpectedOrient.angleY > 180.0f)
+                m_robotExpectedOrient.angleY -= 360.0f;
+            while(m_robotExpectedOrient.angleY < -180.0f)
+                m_robotExpectedOrient.angleY += 360.0f;
+            m_robotExpectedOrient.position[0] += x_move;
+            m_robotExpectedOrient.position[2] += z_move;
+        }
+    }
+    else{
+        status = true;
+        m_robotExpectedOrient.angleY += displacement.angleY;
+        for(int i=0; i<3; i++)
+            m_robotExpectedOrient.position[i] += displacement.position[i];
+    }
+    return status;
 }
 
 bool RobotController::moveStepperMotor(bool directionRight, unsigned angle, unsigned vDegreeSpeed)
@@ -198,12 +254,13 @@ void RobotController::clearSerialBuffers()
 
 QString RobotController::readMessageFromSerial(unsigned timeMS)
 {
-    unsigned divisor = 10;
+    unsigned loopCount = (timeMS/g_intervalMSwaitingForMsg)+1;
+    loopCount *= 3;
     QString msg = serial.readAll();
     bool msgFull = false;
-    for(int i=0; i<g_maxReadingTestCount*divisor && !msgFull; i++)
+    for(int i=0; i<loopCount && !msgFull; i++)
     {
-        while(serial.waitForReadyRead(timeMS/divisor))
+        while(serial.waitForReadyRead(g_intervalMSwaitingForMsg))
         {
             msg.append(serial.readAll());
             if(msg.contains("\x0A") && msg.size()>= g_minLengthOfMessage)

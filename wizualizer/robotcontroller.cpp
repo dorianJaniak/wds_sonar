@@ -1,6 +1,7 @@
 #include "robotcontroller.h"
 #include <QtSerialPort/QSerialPortInfo>
-
+#include <QEventLoop>
+#include <QCoreApplication>
 
 RobotController::RobotController() :
     MessageController()
@@ -10,6 +11,7 @@ RobotController::RobotController() :
     empty.position = QVector4D(0,0,0,1);
     empty.angleY = 0;
     m_robotActualOrient = empty;
+    m_serialReadyRead = false;
 }
 
 RobotController::~RobotController()
@@ -36,37 +38,23 @@ void RobotController::moveRobot(RobotOrientation displacement)
 
 bool RobotController::moveStepperMotor(bool directionRight, unsigned angle, unsigned vDegreeSpeed)
 {
-    QString msg_send = prepareStringFromList(prepareW04(directionRight,angle,vDegreeSpeed));
-    serial.write(msg_send.toLocal8Bit());
+    clearSerialBuffers();
+
     unsigned timeMS = (angle*1000)/vDegreeSpeed;
+    QString msgSend = prepareStringFromList(prepareW04(directionRight,angle,vDegreeSpeed));
+    serial.write(msgSend.toLocal8Bit());
     emit blockWindow(tr("Poczekaj %1 s, powinieneś zobaczyć obracający się czujnik zamieszczony na silniku krokowym.").arg(QString::number(timeMS/1000)),timeMS);
-/*
-            QString msg_response(serial.readLine());
-            emit sendLog(tr("WIADOMOŚĆ: ") + msg_response);
-            if(reinterpretW00(prepareListFromString(msg_response)))
-            {
-                emit sendLog(tr("Operacja obrotu sonaru zakończona powodzeniem."));
-                return true;
-            }
-     //   }
+    QCoreApplication::processEvents(QEventLoop::AllEvents);
 
-    return false;
-    */
+    QString msgResponse = readMessageFromSerial(timeMS);
+
+    emit sendLog(tr("WIADOMOŚĆ: ") + msgResponse);
+    if(reinterpretW00(prepareListFromString(msgResponse)))
+    {
+        emit sendLog(tr("Operacja obrotu sonaru zakończona powodzeniem."));
+        return true;
+    }
     return true;
-}
-
-void RobotController::initializeSerial()
-{
-    serial.setBaudRate(9600,QSerialPort::AllDirections);
-    serial.setDataBits(QSerialPort::Data8);
-    serial.setFlowControl(QSerialPort::NoFlowControl);
-    serial.setParity(QSerialPort::NoParity);
-    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
-    if(ports.size())
-        serial.setPort(ports.at(0));
-    else
-        serial.setPortName("");
-    serial.setStopBits(QSerialPort::OneStop);
 }
 
 bool RobotController::openSerial()
@@ -166,4 +154,40 @@ QString RobotController::getInfoAboutSerial()
     info += "\n";
 
     return info;
+}
+
+void RobotController::initializeSerial()
+{
+    serial.setBaudRate(9600,QSerialPort::AllDirections);
+    serial.setDataBits(QSerialPort::Data8);
+    serial.setFlowControl(QSerialPort::NoFlowControl);
+    serial.setParity(QSerialPort::NoParity);
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    if(ports.size())
+        serial.setPort(ports.at(0));
+    else
+        serial.setPortName("");
+    serial.setStopBits(QSerialPort::OneStop);
+}
+
+void RobotController::clearSerialBuffers()
+{
+    serial.clear();
+    serial.clearError();
+}
+
+QString RobotController::readMessageFromSerial(unsigned timeMS)
+{
+    QString msg = serial.readAll();
+    bool msgFull = false;
+    for(int i=0; i<g_maxReadingTestCount && !msgFull; i++)
+    {
+        while(serial.waitForReadyRead(timeMS))
+        {
+            msg.append(serial.readAll());
+            if(msg.contains("\n") && msg.size()>= g_minLengthOfMessage)
+                msgFull = true;
+        }
+    }
+    return msgResponse;
 }

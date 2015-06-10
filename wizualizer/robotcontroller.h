@@ -71,6 +71,8 @@ public slots:
 
 private:
     void initializeSerial();
+    void clearSerialBuffers();
+    QString readMessageFromSerial(unsigned timeMS);
 };
 
 #endif // ROBOTCONTROLLER_H

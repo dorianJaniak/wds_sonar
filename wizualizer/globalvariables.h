@@ -6,6 +6,8 @@
 
 const unsigned g_maxWriteLengthData = 150;  ///<Maksymalna długość wiadomości wysyłanej w komunikacji szeregowej
 const unsigned g_maxReadLengthData = 500;   ///<Maksymalna długość wiadomości odbieranej w komunikacji szeregowej
+const unsigned g_maxReadingTestCount = 5;   ///<Maksymalna ilość ponowienia prób odczytu wiadomości w komunikacji szeregowej
+const unsigned g_minLengthOfMessage = 4;    ///<Minimalna długość wiadomości wysyłanej i odbieranej w komunikacji szeregowej
 
 const float g_maxFar = 200.0f;  ///<Pomiar ponad g_maxFar centymetrów będzie uznany za nieprawidłowy
 const float g_yMapStep = 0.1f; ///<Każda kolejna podmapa zostanie podniesiona o podaną wartość

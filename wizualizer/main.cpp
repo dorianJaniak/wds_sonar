@@ -2,6 +2,15 @@
 #include <QApplication>
 #include <QSurfaceFormat>
 
+/**
+ * @mainpage Wizualizator danych sonaru
+ *
+ * Aplikacja powstała w ramach projektu z kursu Wizualizacji Danych Sensorycznych, prowadzonych przez dr inż. Bogdana Kreczmera.
+ * Autorem aplikacji jest Dorian Janiak - student kierunku Automatyka i Robotyka na wydziale Elektroniki Politechniki Wrocławskiej.
+ * Zadaniem aplikacji jest wysyłanie żądań do robota oraz interpretowania odpowiedzi od urządzenia, a następnie rysowanie mapy otoczenia
+ * na podstawie otrzymanych odpowiedzi.
+ */
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

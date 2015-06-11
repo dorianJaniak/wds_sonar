@@ -23,7 +23,7 @@ public:
                         /**
      * @brief Ładuje plik symulacyjny o nazwie fileName
      *
-     * @param fileName nazwa pliku
+     * @param[in] fileName nazwa pliku
      * @return nullptr gdy wystąpił błąd krytyczny dla operacji odczytu danych,
      * w przeciwnym wypadku wskaźnik na pełny pakiet wierzchołków potrzebny do
      * stworzenia obiektu EnvMap.
@@ -32,7 +32,7 @@ public:
                         /**
      * @brief Ładuje plik CSV i parsuje go względem znaku średnika (';')
      *
-     * @param fileName nazwa pliku csv
+     * @param[in] fileName nazwa pliku csv
      * @return zawartość kolejnych pól odczytanych z pliku
      */
     QStringList getFromCSVFile(const QString & fileName);
@@ -40,7 +40,7 @@ public:
      * @brief Ładuje obiekt 3D z pliku STL
      *
      * Przyjmuje, że obiekt jest lity (nie ma przerw w siatce).
-     * @param fileName nazwa pliku
+     * @param[in] fileName nazwa pliku
      * @return Wektor wierzchołków lub nullptr gdy operacja się nie powiedzie.
      */
     QVector<QVector4D>* getFromSTLFile(const QString & fileName);

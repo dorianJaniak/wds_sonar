@@ -3,7 +3,6 @@
 
 #include <QVector4D>
 #include "messagecontroller.h"
-#include "bluetoothcontroller.h"
 #include "globalvariables.h"
 #include <QtSerialPort/QSerialPort>
 #include <QObject>

@@ -36,3 +36,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     author.ui \
     comwindow.ui
+
+RESOURCES += \
+    wiz_sens.qrc

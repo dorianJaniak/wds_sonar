@@ -27,9 +27,9 @@ public:
                             /**
      * @brief Konstruktor
      *
-     * @param verts wskaźnik na pełny zestaw wierzchołków potrzebnych do wyrysowania wyniku jednego skanowania
-     * @param color kolor materiału
-     * @param center punkt środkowy obiektu we współrzędnych jednorodnych (pozycja robota)
+     * @param[in] verts wskaźnik na pełny zestaw wierzchołków potrzebnych do wyrysowania wyniku jednego skanowania
+     * @param[in] color kolor materiału
+     * @param[in] center punkt środkowy obiektu we współrzędnych jednorodnych (pozycja robota)
      */
     EnvObj(QVector<QVector<QVector4D>*>* verts, QVector4D color = QVector4D(), QVector4D center = QVector4D(0.0f,0.0f,0.0f,1.0f), float angleY=0.0f, QVector4D scale = QVector4D(1.0f,1.0f,1.0f,1.0f));
     ~EnvObj();
@@ -40,13 +40,13 @@ public:
     unsigned int getMeshesCount();
                             /**
      * @brief weź tablicę wierzchołków jednej podsiatki
-     * @param meshIndex numer podsiatki
+     * @param[in] meshIndex numer podsiatki
      * @return zwraca wskaźnik na tablicę gdy poprawny indeks, w przeciwnym wypadku nullptr
      */
     const float * getVerts(int meshIndex);
                             /**
      * @brief Pobranie ilości wierzchołków danej podsiatki
-     * @param meshIndex numer podsiatki
+     * @param[in] meshIndex numer podsiatki
      * @return zwraca ilość wierzchołków lub 0 gdy niepoprawny numer indeksu
      */
     unsigned int getVertsCount(int meshIndex);

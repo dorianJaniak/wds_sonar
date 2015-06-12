@@ -4,6 +4,7 @@
 #include <QVector4D>
 #include <QColor>
 
+const QString g_robotFileName = QString("objects/robot.stl");
 const double g_pi = 3.14159265359;          ///<Liczba pi
 
 const unsigned g_maxWriteLengthData = 150;  ///<Maksymalna długość wiadomości wysyłanej w komunikacji szeregowej

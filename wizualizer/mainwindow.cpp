@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&comWindow,SIGNAL(updateSerial(const QSerialPortInfo&,QSerialPort::BaudRate,QSerialPort::DataBits,QSerialPort::FlowControl,QSerialPort::Parity,QSerialPort::StopBits)),
             &m_robotController,SLOT(reconfigureSerial(QSerialPortInfo,QSerialPort::BaudRate,QSerialPort::DataBits,QSerialPort::FlowControl,QSerialPort::Parity,QSerialPort::StopBits)));
     connect(&m_robotController,SIGNAL(blockWindow(QString,uint)),this,SLOT(blockWindow(QString,uint)));
-    connect(&m_robotController,SIGNAL(unlockWindow()),this,SLOT(unlockWindow()));
+  //  connect(&m_robotController,SIGNAL(unlockWindow()),this,SLOT(unlockWindow()));
 
     initialize();
 }
@@ -50,7 +50,7 @@ void MainWindow::initialize()
     m_diffOrientation.position = QVector4D(0,0,0,0);
     m_diffOrientation.angleY = 0.0f;
 
-    QVector<QVector4D> * robotPtr = m_fileController.getFromSTLFile("objects/robot.stl");
+    QVector<QVector4D> * robotPtr = m_fileController.getFromSTLFile(g_robotFileName);
     if(robotPtr == nullptr)
         QMessageBox::critical(this,tr("Błąd odczytu modelu 3D robota"),tr("Nie udało się załadować pliku robot.stl zawierającego siatkę obiektu prezentującego robota w widoku 3D"));
     else

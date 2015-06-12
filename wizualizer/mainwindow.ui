@@ -118,7 +118,7 @@
    <property name="minimumSize">
     <size>
      <width>200</width>
-     <height>400</height>
+     <height>408</height>
     </size>
    </property>
    <property name="features">
@@ -140,7 +140,7 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>125</height>
+         <height>150</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -163,6 +163,10 @@
             <property name="text">
              <string>&lt;-</string>
             </property>
+            <property name="icon">
+             <iconset resource="wiz_sens.qrc">
+              <normaloff>:/arr_left</normaloff>:/arr_left</iconset>
+            </property>
            </widget>
           </item>
           <item>
@@ -170,12 +174,20 @@
             <property name="text">
              <string>A</string>
             </property>
+            <property name="icon">
+             <iconset resource="wiz_sens.qrc">
+              <normaloff>:/arr_front</normaloff>:/arr_front</iconset>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QToolButton" name="rightButton">
             <property name="text">
              <string>-&gt;</string>
+            </property>
+            <property name="icon">
+             <iconset resource="wiz_sens.qrc">
+              <normaloff>:/arr_right</normaloff>:/arr_right</iconset>
             </property>
            </widget>
           </item>
@@ -340,14 +352,22 @@
           <item>
            <widget class="QPushButton" name="pb_moveLeftStepper">
             <property name="text">
-             <string>&lt;-</string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="wiz_sens.qrc">
+              <normaloff>:/arr_left</normaloff>:/arr_left</iconset>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="pb_moveRightStepper">
             <property name="text">
-             <string>-&gt;</string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="wiz_sens.qrc">
+              <normaloff>:/arr_right</normaloff>:/arr_right</iconset>
             </property>
            </widget>
           </item>
@@ -517,6 +537,8 @@ p, li { white-space: pre-wrap; }
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="wiz_sens.qrc"/>
+ </resources>
  <connections/>
 </ui>

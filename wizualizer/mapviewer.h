@@ -41,9 +41,9 @@ public:
 
                         /**
      * @brief Dodaje obiekt przedstawiający wyniki skanowania otoczenia
-     * @param verts kompletny zestaw wierzchołków
-     * @param center punkt środkowy obiektu
-     * @param allowToModifyY pozwolenie na "podnoszenie" kolejnych skanów względem osi Y
+     * @param[in] verts kompletny zestaw wierzchołków
+     * @param[in] center punkt środkowy obiektu
+     * @param[in] angleY kąt obrotu wzdłuż osi Y wyrażony w stopniach.
      */
     void addEnvMap(QVector<QVector<QVector4D> *> *verts, QVector4D center, float angleY);
                         /**
